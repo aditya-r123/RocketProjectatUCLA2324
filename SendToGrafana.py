@@ -1,4 +1,3 @@
-## All areas marked <!> are areas that need to be verified to match the data being received
 from serial import Serial
 import socket
 import time
