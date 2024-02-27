@@ -1,3 +1,4 @@
+
 #include <HardwareSerial.h>
 #include <RP_ADS1256.h>
 #include <HX711.h>
@@ -223,12 +224,12 @@ void loop()
     
     for(int i = 0; i < NUM_PT; i++)
     {
-      printStr += "PT " + std::to_string(i+1) + ": " + std::to_string(ptVals[i]) + "\t";
+      printStr += "PT" + std::to_string(i+1) + ": " + std::to_string(ptVals[i]) + ", ";
       storeStr += String(ptVals[i]) + ",";
     }
     for(int i = 0; i < NUM_LC; i++)
     {
-      printStr += "LC " + std::to_string(i+1) + ": " + std::to_string(lcVals[i]) + "\t";
+      printStr += "LC" + std::to_string(i+1) + ": " + std::to_string(lcVals[i]) + ", ";
       storeStr += String(lcVals[i]) + ",";
     }
 
