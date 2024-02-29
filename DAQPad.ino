@@ -8,7 +8,7 @@
 #include "SPI.h"
 
 // GLOBAL CONSTANTS
-const int NUM_PT = 4;
+const int NUM_PT = 6;
 const int NUM_LC = 2;
 const int NUM_TC = 2;
 
@@ -186,7 +186,7 @@ void loop()
       long rawConversion = PTADC.cycleSingle();
       float voltageValue = PTADC.convertToVoltage(rawConversion);
 
-      if(i >= 4) continue;
+      if(i >= NUM_PT) continue;
       ptVals[i] = voltageValue;
     }
 
