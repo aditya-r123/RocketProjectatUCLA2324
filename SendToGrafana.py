@@ -1,16 +1,20 @@
+
+
 from serial import Serial
 import socket
 import time
 import re
 
 #MODIFY PORT AND BAUDRATE 
-PORT = '/dev/cu.usbmodem1433401'
+#PORT = '/dev/cu.usbserial-0001'
+PORT = '/dev/cu.SLAB_USBtoUART'
+#PORT = '/dev/cu.usbmodem131488301'
 BAUDRATE = 9600
 
 
 measurement = 'sensorvals'
 
-field_keys = ["pt1", "pt2", "pt3", "pt4", "pt5", "pt6", "lc1", "lc2", "tc1", "tc2"]
+field_keys = ["pt1", "pt2", "pt3", "pt4", "pt5", "lc1", "lc2", "tc1", "tc2"]
 
 
 #just in case
@@ -42,6 +46,8 @@ while True:
     for i in range(N):
         timestamp = str(getTime())
         line = ser.readline().decode()
+        #line = "0.1233 PT1: 100, PT2: 200, PT3: 300, PT4: 400, PT5: 500, LC1: 0.1, LC2: 0.2, TC1: 1, TC2: 2"
+
         line = line.replace(",", "")
         #this starts the string at the first PT
         #the millis value that prints should be ignored
@@ -52,6 +58,8 @@ while True:
         line_processing = line_processing.replace(",", "", 1)
         line_processing = "".join(line_processing.split())
         data = line_processing.split(',')
+
+
 
         #Sending data to Grafana as:
         #pt1,pt2,pt3,pt4,pt5,pt6,lc1,lc2,tc1,tc2
@@ -65,5 +73,6 @@ while True:
 
         # create influx string
         influx_string = measurement + ' ' + fields + ' ' + timestamp
-        # print(influx_string)
+        print(influx_string)
         UDPClientSocket.sendto(influx_string.encode(), serverAddressPort)
+
