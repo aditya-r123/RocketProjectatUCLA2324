@@ -1,5 +1,3 @@
-
-
 from serial import Serial
 import socket
 import time
@@ -11,10 +9,9 @@ PORT = '/dev/cu.SLAB_USBtoUART'
 #PORT = '/dev/cu.usbmodem131488301'
 BAUDRATE = 9600
 
-
 measurement = 'sensorvals'
 
-field_keys = ["pt1", "pt2", "pt3", "pt4", "pt5", "lc1", "lc2", "tc1", "tc2"]
+field_keys = ["pt1", "pt2", "pt3", "pt4", "pt5", "pt6", "lc1", "lc2", "tc1", "tc2"]
 
 
 #just in case
@@ -45,8 +42,10 @@ N = 3
 while True:
     for i in range(N):
         timestamp = str(getTime())
+        print(ser.readline())
         line = ser.readline().decode()
-        #line = "0.1233 PT1: 100, PT2: 200, PT3: 300, PT4: 400, PT5: 500, LC1: 0.1, LC2: 0.2, TC1: 1, TC2: 2"
+        print(line)
+        #line = "0.1233 PT1: 100, PT2: 200, PT3: 300, PT4: 400, PT5: 500, PT6: 600, LC1: 0.1, LC2: 0.2, TC1: 1, TC2: 2"
 
         line = line.replace(",", "")
         #this starts the string at the first PT
@@ -73,6 +72,5 @@ while True:
 
         # create influx string
         influx_string = measurement + ' ' + fields + ' ' + timestamp
-        print(influx_string)
+        #print(influx_string)
         UDPClientSocket.sendto(influx_string.encode(), serverAddressPort)
-
