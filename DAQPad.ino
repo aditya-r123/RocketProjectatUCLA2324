@@ -181,7 +181,7 @@ void loop()
     String storeStr = String(millis()) + ",";
 
     // Read Pressure Transducer values
-    for (int i = 0; i < 8; i++)
+    for (int i = 0; i < 8; i++) //Why is this 8??
     {
       long rawConversion = PTADC.cycleSingle();
       float voltageValue = PTADC.convertToVoltage(rawConversion);
@@ -208,8 +208,9 @@ void loop()
     ptVals[1] = ptVals[1] * 425 - 254;
     ptVals[2] = ptVals[2] * 420 - 252;
     ptVals[3] = ptVals[3] * 422 - 254;
-    // ptVal[4] = ptVal[4] * 1.17 - 276;
-    // ptVal[5] = ptVal[5] * 1.17 - 276;
+    ptVal[4] = ptVal[4] * 1.17 - 276;
+    ptVal[5] = ptVal[5] * 1.17 - 276; //copied from ptVal[4]
+    ptVal[6] = ptVal[6] * 1.17 - 276; //copied from ptVal[4]
   
     // Sending over Ethernet cable (convert all data to Strings)
     // digitalWrite(DE_RE_PIN, HIGH);
