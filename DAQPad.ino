@@ -47,7 +47,8 @@ HX711 LC2;
 
 // LC calibration factors
 const float LC1_calibration = 995;    // Pulling is positive, pushing is negative
-const float LC2_calibration = 2105;   // Pulling is positive, pushing is negative
+const float LC2_calibration = -965;   // Pulling is positive, pushing is negative
+// OLD VALUE: const float LC2_calibration = 2105;   // Pulling is positive, pushing is negative
 
 
 // SD CARD READER
@@ -91,8 +92,10 @@ void setup() {
   pinMode(DE_RE_PIN, OUTPUT);
   digitalWrite(DE_RE_PIN, HIGH);
 
+  int baud = 74880;
+
   rs485Serial.begin(115200, SERIAL_8N1, RO_PIN, DI_PIN);
-  Serial.begin(115200);
+  Serial.begin(9600);
 
 
   // PRESSURE MEASUREMENT
@@ -177,7 +180,7 @@ void loop()
   {
       // Create variables for all sensors
     float ptVals[6], lcVals[2], tcVals[2]; // TC1: Type T TC, TC2: Type K TC
-    std::string printStr = std::to_string(millis()) + " ";
+    String printStr = String(millis()) + " ";
     String storeStr = String(millis()) + ",";
 
     // Read Pressure Transducer values
@@ -204,13 +207,12 @@ void loop()
     
   
     // Calibration for PTs (likely have to calibrate everytime you flow)
-    ptVals[0] = ptVals[0] * 416 - 235;
-    ptVals[1] = ptVals[1] * 425 - 254;
-    ptVals[2] = ptVals[2] * 420 - 252;
-    ptVals[3] = ptVals[3] * 422 - 254;
-    ptVal[4] = ptVal[4] * 1.17 - 276;
-    ptVal[5] = ptVal[5] * 1.17 - 276; //copied from ptVal[4]
-    ptVal[6] = ptVal[6] * 1.17 - 276; //copied from ptVal[4]
+    ptVals[0] = ptVals[0] * 107 - 63.5;
+    ptVals[1] = ptVals[1] * 420 - 251;
+    ptVals[2] = ptVals[2] * 421 - 245;
+    ptVals[3] = ptVals[3] * 420 - 259;
+    ptVals[4] = ptVals[4] * 418 - 237;
+    ptVals[5] = ptVals[5] * 421 - 244; //copied from ptVal[4]
   
     // Sending over Ethernet cable (convert all data to Strings)
     // digitalWrite(DE_RE_PIN, HIGH);
@@ -225,12 +227,12 @@ void loop()
     
     for(int i = 0; i < NUM_PT; i++)
     {
-      printStr += "PT" + std::to_string(i+1) + ": " + std::to_string(ptVals[i]) + ", ";
+      printStr += "PT" + String(i+1) + ": " + String(int(ptVals[i])) + ", ";
       storeStr += String(ptVals[i]) + ",";
     }
     for(int i = 0; i < NUM_LC; i++)
     {
-      printStr += "LC" + std::to_string(i+1) + ": " + std::to_string(lcVals[i]) + ", ";
+      printStr += "LC" + String(i+1) + ": " + String(lcVals[i]) + (i==0 ? ", " : "");
       storeStr += String(lcVals[i]) + ",";
     }
 
