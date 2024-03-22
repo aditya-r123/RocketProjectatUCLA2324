@@ -1,4 +1,3 @@
-
 #include <HardwareSerial.h>
 #include <RP_ADS1256.h>
 #include <HX711.h>

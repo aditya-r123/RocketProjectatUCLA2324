@@ -1,5 +1,3 @@
-
-
 #include <HardwareSerial.h> 
 
 #define RO_PIN 16
