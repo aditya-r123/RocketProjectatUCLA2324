@@ -46,7 +46,7 @@ HX711 LC2;
 
 // LC calibration factors
 const float LC1_calibration = 995;    // Pulling is positive, pushing is negative
-const float LC2_calibration = -965;   // Pulling is positive, pushing is negative
+const float LC2_calibration = -2025;   // Pulling is positive, pushing is negative
 // OLD VALUE: const float LC2_calibration = 2105;   // Pulling is positive, pushing is negative
 
 
@@ -82,7 +82,7 @@ Adafruit_MAX31856 tc2 = Adafruit_MAX31856(??, ??, ??, ??); // Type K TC
 */
 
 // Data Sending Interval Settings
-unsigned long long delay_time = 200;
+unsigned long long delay_time = 250;
 unsigned long long last_time = 0;
 
 void setup() {
@@ -94,7 +94,7 @@ void setup() {
   int baud = 74880;
 
   rs485Serial.begin(115200, SERIAL_8N1, RO_PIN, DI_PIN);
-  Serial.begin(9600);
+  Serial.begin(115200);
 
 
   // PRESSURE MEASUREMENT
@@ -130,7 +130,9 @@ void setup() {
   for(int i=0; i<NUM_PT; i++) dataHeader += "P" + std::to_string(i+1) + ",";
   for(int i=0; i<NUM_LC; i++) dataHeader += "L" + std::to_string(i+1) + ",";
   for(int i=0; i<NUM_TC; i++) dataHeader += "T" + std::to_string(i+1) + (i==NUM_TC-1 ? "\n": ",");
-  writeFile(SD, sd_fileName.c_str(), dataHeader.c_str());
+  //if(!file.isopen()){
+     appendFile(SD, sd_fileName.c_str(), dataHeader.c_str());
+  //}
 
 
   /*
@@ -206,12 +208,12 @@ void loop()
     
   
     // Calibration for PTs (likely have to calibrate everytime you flow)
-    ptVals[0] = ptVals[0] * 107 - 63.5;
-    ptVals[1] = ptVals[1] * 420 - 251;
-    ptVals[2] = ptVals[2] * 421 - 245;
-    ptVals[3] = ptVals[3] * 420 - 259;
-    ptVals[4] = ptVals[4] * 418 - 237;
-    ptVals[5] = ptVals[5] * 421 - 244; //copied from ptVal[4]
+    ptVals[0] = ptVals[0] * 437 - 127;
+    ptVals[1] = ptVals[1] * 323 - 80.1;
+    ptVals[2] = ptVals[2] * 426 - 118;
+    ptVals[3] = ptVals[3] * 324 - 79.9;
+    ptVals[4] = ptVals[4] * 421 - 114;
+    ptVals[5] = ptVals[5] * 424 - 110;
   
     // Sending over Ethernet cable (convert all data to Strings)
     // digitalWrite(DE_RE_PIN, HIGH);
@@ -236,12 +238,11 @@ void loop()
     }
 
     // Printing to Serial
-    Serial.println(printStr.c_str());
 
     // Sending via Ethernet Cable
     digitalWrite(DE_RE_PIN, HIGH);
-    delay(50);
-    printStr = 'A' + printStr + 'Z';
+    printStr = 'A' + printStr + ", " + 'Z';
+    Serial.println(printStr.c_str());
     rs485Serial.println(printStr.c_str());
 
     // Storing to microSD Card
