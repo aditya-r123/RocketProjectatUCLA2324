@@ -2,7 +2,7 @@
 #include <PubSubClient.h>
 
 // WiFi credentials
-const char* ssid = "UCLA_Rocket_router";
+const char* ssid = "UCLA_Rocket_Repeat";
 const char* password = "electronics";
 
 // MQTT Broker details
@@ -39,7 +39,7 @@ PubSubClient client(espClient);
 #define siren 13 //22
 #define sirenPower 32 //23
 
-unsigned long long delay_time = 250;
+unsigned long long delay_time = 500;
 unsigned long long last_time = 0;
 String message = "";
 String data = "";
@@ -47,7 +47,6 @@ String data = "";
 //HardwareSerial rs485Serial(2);
 
 void setup_wifi() {
-  delay(10);
   // Connect to Wi-Fi network with SSID and password
   Serial.println();
   Serial.print("Connecting to ");
@@ -88,13 +87,12 @@ void reconnect() {
     // Attempt to connect
     if (client.connect("ESP32Client"/*, mqtt_username, mqtt_password)*/)) {
       Serial.println("connected");
-      client.subscribe(data_topic);
+      client.subscribe(data_topic, 0);
     } else {
       Serial.print("failed, rc=");
       Serial.print(client.state());
       Serial.println(" try again in 5 seconds");
-      // Wait 5 seconds before retrying
-      delay(5000);
+
     }
   }
 }
