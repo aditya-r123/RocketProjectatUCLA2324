@@ -1,8 +1,10 @@
+
+
 #include <HardwareSerial.h> 
 
 #define RO_PIN 16
 #define DI_PIN 17
-#define extra 2 //32
+#define outlet 2 //32
 //#define SER_BUF_SIZE 1024
 #define fill 22
 #define dump 21 
@@ -12,6 +14,8 @@
 #define mpv 4
 #define ignite 15
 #define abortSiren 23
+#define abortValve 13
+
 
 unsigned long long delay_time = 250;
 unsigned long long last_time = 0;
@@ -19,8 +23,6 @@ unsigned long long last_time = 0;
 HardwareSerial rs485Serial(2);
 
 void setup() {
-  pinMode(extra, OUTPUT);
-  digitalWrite(extra, HIGH);
 
   Serial.begin(115200);
 
@@ -34,6 +36,8 @@ void setup() {
   pinMode(qd, OUTPUT);
   pinMode(mpv, OUTPUT);  
   pinMode(purge, OUTPUT);   
+  pinMode(outlet, OUTPUT);
+  pinMode(abortValve, OUTPUT);   
 
   digitalWrite(abortSiren, LOW);//off
   digitalWrite(ignite, LOW);//off
@@ -43,6 +47,8 @@ void setup() {
   digitalWrite(qd, HIGH);//open
   digitalWrite(mpv, HIGH);
   digitalWrite(purge, HIGH);//closed
+  digitalWrite(outlet, HIGH);//closed
+  digitalWrite(abortValve, LOW);//closed
 
 
   /*
@@ -69,6 +75,8 @@ void loop() {
       digitalWrite(qd, HIGH);
       digitalWrite(mpv, HIGH);
       digitalWrite(purge, HIGH);
+      digitalWrite(ignite, LOW);
+      digitalWrite(abortValve, LOW);
     }
   }
 
@@ -77,7 +85,7 @@ void loop() {
     label:
     String message;
     if (received == 'A'){
-      for (int i = 0; i < 9; i++){
+      for (int i = 0; i < 10; i++){
         received = rs485Serial.read();
         if (received != '1' && received != '0'){
           Serial.println("Invalid Message: " + received);
@@ -93,13 +101,14 @@ void loop() {
 
     const short PURGE_SWITCH = 4;
     const short FILL_SWITCH = 5;
-    const short ABORT_SIREN_SWITCH = 0;
+    const short ABORT_SIREN_SWITCH = 9;
     const short DUMP_SWITCH = 6; 
     const short VENT_SWITCH = 2;
     const short QD_SWITCH = 1;
     const short IGNITE_SWITCH = 3;
     const short MPV_SWITCH = 8;
-    const short ABORT_SWITCH = 7;
+    const short OUTLET_SWITCH = 7;
+    const short ABORT_VALVE_SWITCH = 0;
 
     if(message[FILL_SWITCH] == ACTUATED)
       digitalWrite(fill, LOW);
@@ -141,17 +150,16 @@ void loop() {
     if(message[MPV_SWITCH] == '0')
       digitalWrite(mpv, HIGH);
 
-    if(message[ABORT_SWITCH] == ACTUATED){
-      digitalWrite(abortSiren, HIGH);
-      digitalWrite(ignite, LOW);
+    if(message[OUTLET_SWITCH] == ACTUATED)
+      digitalWrite(outlet, LOW);
+    if(message[OUTLET_SWITCH] == '0')
+    digitalWrite(outlet, HIGH);
 
-      digitalWrite(fill, HIGH);
-      digitalWrite(vent, HIGH);
-      digitalWrite(dump, HIGH);
-      digitalWrite(qd, HIGH);
-      digitalWrite(mpv, HIGH);
-      digitalWrite(purge, HIGH);
-    }
+    if(message[ABORT_VALVE_SWITCH] == ACTUATED)
+      digitalWrite(abortValve, HIGH);
+    if(message[ABORT_VALVE_SWITCH] == '0')
+    digitalWrite(abortValve, LOW);
+    
     last_time = millis();
   }
 }
