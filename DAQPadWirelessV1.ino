@@ -79,8 +79,7 @@ void reconnect() {
       Serial.print("failed, rc=");
       Serial.print(client.state());
       Serial.println(" try again in 5 seconds");
-      // Wait 5 seconds before retrying
-      delay(5000);
+
     }
   }
 }
@@ -254,7 +253,7 @@ void setup() {
 
 void loop() 
 {
-  if ((millis() - last_time) > delay_time && !client.connected()) {
+  if (!client.connected()) {
     reconnect();
   }
 
@@ -311,12 +310,12 @@ void loop()
     
     for(int i = 0; i < NUM_PT; i++)
     {
-      printStr += "PT " + String(i+1) + ": " + String(ptVals[i]) + "\t";
+      printStr += "PT " + String(i+1) + ": " + String(ptVals[i]) + ", ";
       storeStr += String(ptVals[i]) + ",";
     }
     for(int i = 0; i < NUM_LC; i++)
     {
-      printStr += "LC " + String(i+1) + ": " + String(lcVals[i]) + "\t";
+      printStr += "LC " + String(i+1) + ": " + String(lcVals[i]) + ", ";
       storeStr += String(lcVals[i]) + ",";
     }
 
@@ -328,7 +327,7 @@ void loop()
     //delay(50);
     //if (actuation != ""){
       //printStr = "A" + actuation + ", " + printStr + "Z";
-      printStr = "A" + printStr + "Z";
+      printStr = 'A' + printStr + 'Z' + '\n';
       if (printStr.length() <= MQTT_MAX_PACKET_SIZE) {
       client.publish(data_topic, printStr.c_str());
       Serial.println("Sent:");
