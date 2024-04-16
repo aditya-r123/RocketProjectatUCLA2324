@@ -23,7 +23,6 @@ def getTime():
 start_time = str(getTime())
 UDPClientSocket = socket.socket(family=socket.AF_INET, type=socket.SOCK_DGRAM)
 
-# DO I NEED TO CHANGE SERVER ADDRESS PORT????
 serverAddressPort = ('127.0.0.1', 4001)
 #ser = Serial(PORT, BAUDRATE, timeout=0.1)
 
