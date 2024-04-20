@@ -2,7 +2,7 @@
 #include <PubSubClient.h>
 
 // WiFi credentials
-const char* ssid = "UCLA_Rocket_Repeat";
+const char* ssid = "UCLA_Rocket_router";
 const char* password = "electronics";
 
 // MQTT Broker details
@@ -13,40 +13,49 @@ const int mqtt_port = 1883;
 
 // MQTT topics
 const char* switch_topic = "esp32/switch";
-const char* data_topic = "esp32/data";
+const char* ac_topic = "esp32/ac";
 
 WiFiClient espClient;
 PubSubClient client(espClient);
 
-#define RO_PIN 16 //32 boRD
-#define DI_PIN 17 //35
-//jumper wire to HIGH
+#define RO_PIN 16
+#define DI_PIN 17
+#define outlet 2 //32
+//#define SER_BUF_SIZE 1024
+#define fill 22
+#define dump 21 
+#define vent 19
+#define qd 18
+#define purge 5
+#define mpv 4
+#define ignite 15
+#define abortSiren 23
+#define abortValve 13
 
-#define RE 26 //13
-#define DE 27
-//RE to 26
-//DE to 27
+#define fillAc 34
+#define dumpAc 35
+#define ventAc 32
+#define qdAc 33
+#define purgeAc 25
+#define mpvAc 26
+#define abortSirenAc 27
+#define igniteAc 14
 
-#define purge 22 //22
-#define fill 23 //23
-#define abortValve 21 //21
-#define dump 19 //19
-#define vent 18 //18
-#define qd 4 //4 // always on
-#define ignite 2 //2
-#define mpv 15 //15
-#define heatpad 5 //17
-#define siren 13 //22
-#define sirenPower 32 //23
+const short ACTUATED = 0x1;
+short message = 0;
+short actuation = 0;
+bool aborted = false;
 
-unsigned long long delay_time = 500;
-unsigned long long last_time = 0;
-String message = "";
-String data = "";
+unsigned long long delay_time = 100;
+unsigned long long last_time_send = 0;  
+unsigned long long last_time = 0;  
+
+int relays[] = {abortValve, qd, vent, ignite, purge, fill, dump, outlet, mpv, abortSiren};
 
 //HardwareSerial rs485Serial(2);
 
 void setup_wifi() {
+  delay(10);
   // Connect to Wi-Fi network with SSID and password
   Serial.println();
   Serial.print("Connecting to ");
@@ -65,34 +74,49 @@ void setup_wifi() {
 }
 
 void callback(char* topic, byte* payload, unsigned int length) {
-  //Serial.print("Message arrived [");
-  //Serial.print(topic);
-  //Serial.print("] ");
-  for (int i = 0; i < length; i++) {
-    if ((i == 0 && (char)payload[i] != 'A') || (i == length - 1 && (char)payload[i] != 'Z')){
-        return;
-    }
+  if (length == sizeof(short)) {
 
-    if (i > 0 && i < length - 1){
-      data += (char)payload[i];
-    }
+    memcpy(&message, payload, sizeof(message));
+    
+    // Now 'receivedValue' contains the reconstructed short value
   }
-  Serial.println(data);
+  aborted = false;
+  last_time = millis();
+  Serial.println(message, BIN);
 }
 
 void reconnect() {
   // Loop until we're reconnected
+  unsigned long long disconnect_time = millis();
   while (!client.connected()) {
+    Serial.println("Unavailable...");
+    if (millis() - disconnect_time > 10000){
+      digitalWrite(abortSiren, HIGH);
+    }
+    if (millis() - disconnect_time > 20000){
+      Serial.println("Aborted...");
+      digitalWrite(ignite, LOW);
+      digitalWrite(fill, HIGH);
+      digitalWrite(vent, HIGH);
+      digitalWrite(dump, HIGH);
+      digitalWrite(qd, HIGH);
+      digitalWrite(mpv, HIGH);
+      digitalWrite(purge, HIGH);
+      digitalWrite(ignite, LOW);
+      digitalWrite(abortValve, LOW);
+    }
+
     Serial.print("Attempting MQTT connection...");
     // Attempt to connect
-    if (client.connect("ESP32Client"/*, mqtt_username, mqtt_password)*/)) {
+    if (client.connect("ESP32ClientControls"/*, mqtt_username, mqtt_password*/)) {
       Serial.println("connected");
-      client.subscribe(data_topic, 0);
+      disconnect_time = millis();
+      // Once connected, subscribe to the topic
+      client.subscribe(switch_topic, 0);
     } else {
       Serial.print("failed, rc=");
       Serial.print(client.state());
-      Serial.println(" try again in 5 seconds");
-
+      
     }
   }
 }
@@ -100,31 +124,43 @@ void reconnect() {
 void setup() {
   Serial.begin(115200);
   setup_wifi();
-  client.setServer(mqtt_server, mqtt_port);\
+  client.setServer(mqtt_server, mqtt_port);
   client.setCallback(callback);
 
+  //Define all controls
+//  pinMode(spare, OUTPUT);
+  pinMode(abortSiren, OUTPUT);
+  pinMode(ignite, OUTPUT);
+  pinMode(fill, OUTPUT);
+  pinMode(vent, OUTPUT);
+  pinMode(dump, OUTPUT);
+  pinMode(qd, OUTPUT);
+  pinMode(mpv, OUTPUT);  
+  pinMode(purge, OUTPUT);   
+  pinMode(outlet, OUTPUT);
+  pinMode(abortValve, OUTPUT);   
 
-  pinMode(RE, OUTPUT);
-  pinMode(DE, OUTPUT);
-  digitalWrite(RE, HIGH);
-  digitalWrite(DE, HIGH); 
-
-  pinMode(purge, INPUT_PULLDOWN);
-  pinMode(fill, INPUT_PULLDOWN);
-  pinMode(abortValve, INPUT_PULLDOWN);
-  pinMode(dump, INPUT_PULLDOWN);
-  pinMode(vent, INPUT_PULLDOWN);
-  pinMode(qd, INPUT_PULLDOWN);
-  pinMode(ignite, INPUT_PULLDOWN);
-  pinMode(mpv, INPUT_PULLDOWN);
-  pinMode(siren, INPUT_PULLDOWN);
-  pinMode(sirenPower, OUTPUT);
-
-  digitalWrite(sirenPower, HIGH);
+  digitalWrite(abortSiren, LOW);//off
+  digitalWrite(ignite, LOW);//off
+  digitalWrite(fill, HIGH);//closed
+  digitalWrite(vent, HIGH);//open
+  digitalWrite(dump, HIGH);//open
+  digitalWrite(qd, HIGH);//open
+  digitalWrite(mpv, HIGH);
+  digitalWrite(purge, HIGH);//closed
+  digitalWrite(outlet, HIGH);//closed
+  digitalWrite(abortValve, LOW);//closed
   
+  pinMode(purgeAc, INPUT_PULLDOWN);
+  pinMode(fillAc, INPUT_PULLDOWN);
+  pinMode(abortSirenAc, INPUT_PULLDOWN);
+  pinMode(dumpAc, INPUT_PULLDOWN);
+  pinMode(ventAc, INPUT_PULLDOWN);
+  pinMode(qdAc, INPUT_PULLDOWN);
+  pinMode(igniteAc, INPUT_PULLDOWN);
+  pinMode(mpvAc, INPUT_PULLDOWN);
 
-  Serial.println("Setup Complete");
-
+  last_time_send = millis();
   last_time = millis();
 }
 
@@ -132,44 +168,64 @@ void loop() {
   if (!client.connected()) {
     reconnect();
   }
-
   client.loop();
 
-  unsigned long currentMillis = millis();
-  // Every X number of seconds 
-  // it publishes a new MQTT message
-   if((millis() - last_time) > delay_time)
-  {
-    String Purge = String(digitalRead(purge));
-    String Fill = String(digitalRead(fill));
-    String AbortValve = String(digitalRead(abortValve));
-    String Dump = String(digitalRead(dump));
-    String Vent = String(digitalRead(vent));
-    String QD = String (digitalRead(qd));
-    String Ignite = String(digitalRead(ignite));
-    String MPV = String(digitalRead(mpv));
-    String Heatpad = String(digitalRead(heatpad));
-    String Siren = String(digitalRead(siren));
+  if (millis() - last_time > 1000){
+    Serial.println("No message!");
+  }
+  if (millis() - last_time > 10000){
+    aborted = true;
+    digitalWrite(abortSiren, HIGH);
+  }
+  if (millis() - last_time > 20000){
+    Serial.println("Aborted...");
+    digitalWrite(ignite, LOW);
+    digitalWrite(fill, HIGH);
+    digitalWrite(vent, HIGH);
+    digitalWrite(dump, HIGH);
+    digitalWrite(qd, HIGH);
+    digitalWrite(mpv, HIGH);
+    digitalWrite(purge, HIGH);
+    digitalWrite(ignite, LOW);
+    digitalWrite(abortValve, LOW);
+  }
 
-    message = ('A' + AbortValve + QD + Vent + Ignite + Purge + Fill + Dump + Heatpad + MPV + Siren + 'Z');
-
-    // Check message length before publishing
-    if (message.length() <= MQTT_MAX_PACKET_SIZE) {
-      client.publish(switch_topic, message.c_str());
-      //Serial.println("Sent:");
-      //Serial.println(message);
-    } else {
-      //Serial.println("Message too long to publish.");
+  if (!aborted){
+    for (int i = 0; i < 10; i++){
+      bool bitValue = (message >> i) & ACTUATED;
+      if (i == 0 | i == 3 | i == 9){
+        if (bitValue)
+          digitalWrite(relays[i], HIGH);
+        if (!bitValue)
+          digitalWrite(relays[i], LOW);
+      }
+      else {
+        if (bitValue) 
+          digitalWrite(relays[i], LOW);
+        if (!bitValue)
+          digitalWrite(relays[i], HIGH);
+      }
     }
-
-    message = ""; // Clear the message variable
-
-    last_time = millis();
   }
 
-  if (data != ""){
-    //Serial.println("Actuation: ");
-    //Serial.println(actuation);
-    data = "";
-  }
+  if (millis() - last_time_send > delay_time) {
+    actuation = digitalRead(abortSirenAc) |
+                    (digitalRead(igniteAc) << 1) |
+                    (digitalRead(fillAc) << 2) |
+                    (digitalRead(ventAc) << 3) |
+                    (digitalRead(dumpAc) << 4) |
+                    (digitalRead(qdAc) << 5) |
+                    (digitalRead(mpvAc) << 6) |
+                    (digitalRead(purgeAc) << 7);
+    
+    // Check if the message length exceeds the maximum packet size
+    /*byte payload[sizeof(actuation)];
+    memcpy(payload, &actuation, sizeof(actuation));
+
+    // Publish the payload
+    client.publish("topic", payload, sizeof(payload));
+    actuation = 0;*/
+
+    last_time_send = millis();
+  }    
 }
