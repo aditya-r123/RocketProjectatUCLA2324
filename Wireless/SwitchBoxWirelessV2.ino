@@ -2,7 +2,7 @@
 #include <PubSubClient.h>
 
 // WiFi credentials
-const char* ssid = "UCLA_Rocket_Repeat";
+const char* ssid = "UCLA_Rocket_router";
 const char* password = "electronics";
 
 // MQTT Broker details
@@ -39,9 +39,9 @@ PubSubClient client(espClient);
 #define siren 13 //22
 #define sirenPower 32 //23
 
-unsigned long long delay_time = 500;
+unsigned long long delay_time = 100;
 unsigned long long last_time = 0;
-String message = "";
+short message = 0;
 String data = "";
 
 //HardwareSerial rs485Serial(2);
@@ -65,19 +65,10 @@ void setup_wifi() {
 }
 
 void callback(char* topic, byte* payload, unsigned int length) {
-  //Serial.print("Message arrived [");
-  //Serial.print(topic);
-  //Serial.print("] ");
   for (int i = 0; i < length; i++) {
-    if ((i == 0 && (char)payload[i] != 'A') || (i == length - 1 && (char)payload[i] != 'Z')){
-        return;
-    }
-
-    if (i > 0 && i < length - 1){
-      data += (char)payload[i];
-    }
+      Serial.print((char)payload[i]);
   }
-  Serial.println(data);
+  //Serial.println(data);
 }
 
 void reconnect() {
@@ -140,36 +131,33 @@ void loop() {
   // it publishes a new MQTT message
    if((millis() - last_time) > delay_time)
   {
-    String Purge = String(digitalRead(purge));
-    String Fill = String(digitalRead(fill));
-    String AbortValve = String(digitalRead(abortValve));
-    String Dump = String(digitalRead(dump));
-    String Vent = String(digitalRead(vent));
-    String QD = String (digitalRead(qd));
-    String Ignite = String(digitalRead(ignite));
-    String MPV = String(digitalRead(mpv));
-    String Heatpad = String(digitalRead(heatpad));
-    String Siren = String(digitalRead(siren));
+    message = digitalRead(abortValve) |
+                    (digitalRead(qd) << 1) |
+                    (digitalRead(vent) << 2) |
+                    (digitalRead(ignite) << 3) |
+                    (digitalRead(purge) << 4) |
+                    (digitalRead(fill) << 5) |
+                    (digitalRead(dump) << 6) |
+                    (digitalRead(heatpad) << 7) |
+                    (digitalRead(mpv) << 8) |
+                    (digitalRead(siren) << 9) |
+                    (1 << 10);
 
-    message = ('A' + AbortValve + QD + Vent + Ignite + Purge + Fill + Dump + Heatpad + MPV + Siren + 'Z');
+    //message = ('A' + AbortValve + QD + Vent + Ignite + Purge + Fill + Dump + Heatpad + MPV + Siren + 'Z');
 
     // Check message length before publishing
-    if (message.length() <= MQTT_MAX_PACKET_SIZE) {
-      client.publish(switch_topic, message.c_str());
-      //Serial.println("Sent:");
-      //Serial.println(message);
-    } else {
-      //Serial.println("Message too long to publish.");
-    }
+    byte payload[sizeof(message)];
+    memcpy(payload, &message, sizeof(message));
 
-    message = ""; // Clear the message variable
+    // Publish the payload
+  
+    client.publish(switch_topic, payload, sizeof(payload));
+    //client.publish(switch_topic, message);
+    //Serial.println("Sent:");
+    //Serial.println(message, BIN);
+
+    message = 0; // Clear the message variable
 
     last_time = millis();
-  }
-
-  if (data != ""){
-    //Serial.println("Actuation: ");
-    //Serial.println(actuation);
-    data = "";
   }
 }
