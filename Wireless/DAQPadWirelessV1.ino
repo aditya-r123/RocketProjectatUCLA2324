@@ -10,7 +10,7 @@
 #include <PubSubClient.h>
 
 // WiFi credentials
-const char* ssid = "UCLA_Rocket_Repeat";
+const char* ssid = "UCLA_Rocket_router";
 const char* password = "electronics";
 
 // MQTT Broker details
@@ -26,9 +26,10 @@ const char* ac_topic = "esp32/ac";
 WiFiClient espClient;
 PubSubClient client(espClient);
 
-
-String message = "";
-String actuation = "";
+const int maxChar = 200;
+char actuation[11];
+char printStr[maxChar];
+char storeStr[maxChar];
 
 
 void setup_wifi() {
@@ -50,21 +51,19 @@ void setup_wifi() {
   Serial.println(WiFi.localIP());
 }
 
-void callback(char* topic, byte* payload, unsigned int length) {
-  Serial.print("Message arrived [");
-  Serial.print(topic);
-  Serial.print("] ");
-  for (int i = 0; i < length; i++) {
-    if ((i == 0 && (char)payload[i] != 'A') || (i == length - 1 && (char)payload[i] != 'Z')){
-      Serial.println("Message invalid");
-      return;
-    }
 
-    if (i > 0 && i < length - 1){
-      actuation += (char)payload[i];
+void callback(char* topic, byte* payload, unsigned int length) {
+  if (length == sizeof(short)) {
+    short recieved;
+    memcpy(&recieved, payload, sizeof(recieved));
+
+    for (int i = 0; i < 9; i++){
+      actuation[i] = (char)(((recieved >> i) & 1) + '0');
     }
+    actuation[9] = ',';
+    actuation[10] = ' ';
+    // Now 'receivedValue' contains the reconstructed short value
   }
-  Serial.println("Message: " + actuation);
 }
 
 void reconnect() {
@@ -85,9 +84,9 @@ void reconnect() {
 }
 
 // GLOBAL CONSTANTS
-const int NUM_PT = 4;
+const int NUM_PT = 6;
 const int NUM_LC = 2;
-const int NUM_TC = 2;
+const int NUM_TC = 0;
 
 /*
 #include <Adafruit_MAX31856.h>
@@ -159,20 +158,20 @@ Adafruit_MAX31856 tc2 = Adafruit_MAX31856(??, ??, ??, ??); // Type K TC
 */
 
 // Data Sending Interval Settings
-unsigned long long delay_time = 200;
+unsigned long long delay_time = 5;
 unsigned long long last_time = 0;
 
 void setup() {
   Serial.begin(115200);
   setup_wifi();
   client.setServer(mqtt_server, mqtt_port);\
-  client.setCallback(callback);
+  //client.setCallback(callback);
 
   // ETHERNET CONNECTION
   pinMode(DE_RE_PIN, OUTPUT);
   digitalWrite(DE_RE_PIN, HIGH);
 
-  rs485Serial.begin(115200, SERIAL_8N1, RO_PIN, DI_PIN);
+  //rs485Serial.begin(115200, SERIAL_8N1, RO_PIN, DI_PIN);
   Serial.begin(115200);
 
 
@@ -261,10 +260,15 @@ void loop()
 
   if((millis() - last_time) > delay_time)
   {
+    //if (strlen(actuation) != 0){
+      //strcat(printStr, actuation);
+      //strcat(storeStr, actuation);
+    //}
+
       // Create variables for all sensors
     float ptVals[6], lcVals[2], tcVals[2]; // TC1: Type T TC, TC2: Type K TC
-    String printStr = String(millis()) + " ";
-    String storeStr = String(millis()) + ",";
+    sprintf(printStr, "%llu ", millis());
+    sprintf(storeStr, "%llu,", millis());
 
     // Read Pressure Transducer values
     for (int i = 0; i < 8; i++)
@@ -290,12 +294,12 @@ void loop()
     
   
     // Calibration for PTs (likely have to calibrate everytime you flow)
-    ptVals[0] = ptVals[0] * 416 - 235;
-    ptVals[1] = ptVals[1] * 425 - 254;
-    ptVals[2] = ptVals[2] * 420 - 252;
-    ptVals[3] = ptVals[3] * 422 - 254;
-    // ptVal[4] = ptVal[4] * 1.17 - 276;
-    // ptVal[5] = ptVal[5] * 1.17 - 276;
+    ptVals[0] = ptVals[0] * 425 - 123;
+    ptVals[1] = ptVals[1] * 323 - 91.6;
+    ptVals[2] = ptVals[2] * 426 - 125;
+    ptVals[3] = ptVals[3] * 325 - 90.5;
+    ptVals[4] = ptVals[4] * 421 - 126;
+    ptVals[5] = ptVals[5] * 425 - 107;
   
     // Sending over Ethernet cable (convert all data to Strings)
     // digitalWrite(DE_RE_PIN, HIGH);
@@ -310,42 +314,36 @@ void loop()
     
     for(int i = 0; i < NUM_PT; i++)
     {
-      printStr += "PT " + String(i+1) + ": " + String(ptVals[i]) + ", ";
-      storeStr += String(ptVals[i]) + ",";
+      sprintf(printStr + strlen(printStr), "P%d: %.2f,", i + 1, ptVals[i]);
+      sprintf(storeStr + strlen(storeStr), "%.2f,", ptVals[i]);
     }
     for(int i = 0; i < NUM_LC; i++)
     {
-      printStr += "LC " + String(i+1) + ": " + String(lcVals[i]) + ", ";
-      storeStr += String(lcVals[i]) + ",";
+      sprintf(printStr + strlen(printStr), "L%d: %.2f,", i + 1, lcVals[i]);
+      sprintf(storeStr + strlen(storeStr), "%.2f,", lcVals[i]);
     }
 
     // Printing to Serial
     //Serial.println(printStr.c_str());
 
     // Sending via Ethernet Cable
-    digitalWrite(DE_RE_PIN, HIGH);
+    //digitalWrite(DE_RE_PIN, HIGH);
     //delay(50);
-    //if (actuation != ""){
-      //printStr = "A" + actuation + ", " + printStr + "Z";
-      printStr = 'A' + printStr + 'Z' + '\n';
-      if (printStr.length() <= MQTT_MAX_PACKET_SIZE) {
-      client.publish(data_topic, printStr.c_str());
-      Serial.println("Sent:");
-      Serial.println(printStr);
+      strcat(printStr, "\n");
+      if (strlen(printStr) <= MQTT_MAX_PACKET_SIZE) {
+        client.publish(data_topic, printStr);
+        //Serial.println("Sent:");
+        Serial.println(printStr);
       } else {
         Serial.println("Message too long to publish.");
       }
-
-      //actuation = "";
-    //}
-    /*else {
-      printStr = 'A' + printStr + 'Z';
-      rs485Serial.println(printStr.c_str());
-    }*/
+      memset(printStr, 0, sizeof(printStr));
+      memset(storeStr, 0, sizeof(storeStr));
+      memset(printStr, 0, sizeof(printStr));
 
     // Storing to microSD Card
-    //storeStr += "\n";
-    //appendFile(SD, sd_fileName.c_str(), storeStr.c_str());
+    strcat(storeStr, "\n");
+    appendFile(SD, sd_fileName.c_str(), storeStr);
     
     
     /*
