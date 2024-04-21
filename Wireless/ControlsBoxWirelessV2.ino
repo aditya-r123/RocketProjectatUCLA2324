@@ -1,6 +1,23 @@
 #include <WiFi.h>
 #include <PubSubClient.h>
 
+// DEBUGGING
+
+// COMMENT FOR OPS (NO DEBUGGING)
+#define IF_DEBUG true
+
+#ifdef IF_DEBUG
+#define Debug Debug
+#define Debugln Debugln
+
+#ifndef IF_DEBUG
+#define Debug doNot
+#define Debugln doNot
+#endif
+
+// Null function
+void doNot(char *cstr = "") {}
+
 // WiFi credentials
 const char* ssid = "UCLA_Rocket_router";
 const char* password = "electronics";
@@ -57,20 +74,20 @@ int relays[] = {abortValve, qd, vent, ignite, purge, fill, dump, outlet, mpv, ab
 void setup_wifi() {
   delay(10);
   // Connect to Wi-Fi network with SSID and password
-  Serial.println();
-  Serial.print("Connecting to ");
-  Serial.println(ssid);
+  Debugln();
+  Debug("Connecting to ");
+  Debugln(ssid);
   WiFi.begin(ssid, password);
 
   while (WiFi.status() != WL_CONNECTED) {
     delay(500);
-    Serial.print(".");
+    Debug(".");
   }
 
-  Serial.println("");
-  Serial.println("WiFi connected");
-  Serial.println("IP address: ");
-  Serial.println(WiFi.localIP());
+  Debugln("");
+  Debugln("WiFi connected");
+  Debugln("IP address: ");
+  Debugln(WiFi.localIP());
 }
 
 void callback(char* topic, byte* payload, unsigned int length) {
@@ -82,19 +99,19 @@ void callback(char* topic, byte* payload, unsigned int length) {
   }
   aborted = false;
   last_time = millis();
-  Serial.println(message, BIN);
+  Debugln(message, BIN);
 }
 
 void reconnect() {
   // Loop until we're reconnected
   unsigned long long disconnect_time = millis();
   while (!client.connected()) {
-    Serial.println("Unavailable...");
+    Debugln("Unavailable...");
     if (millis() - disconnect_time > 10000){
       digitalWrite(abortSiren, HIGH);
     }
     if (millis() - disconnect_time > 20000){
-      Serial.println("Aborted...");
+      Debugln("Aborted...");
       digitalWrite(ignite, LOW);
       digitalWrite(fill, HIGH);
       digitalWrite(vent, HIGH);
@@ -106,16 +123,16 @@ void reconnect() {
       digitalWrite(abortValve, LOW);
     }
 
-    Serial.print("Attempting MQTT connection...");
+    Debug("Attempting MQTT connection...");
     // Attempt to connect
     if (client.connect("ESP32ClientControls"/*, mqtt_username, mqtt_password*/)) {
-      Serial.println("connected");
+      Debugln("connected");
       disconnect_time = millis();
       // Once connected, subscribe to the topic
       client.subscribe(switch_topic, 0);
     } else {
-      Serial.print("failed, rc=");
-      Serial.print(client.state());
+      Debug("failed, rc=");
+      Debug(client.state());
       
     }
   }
@@ -165,20 +182,21 @@ void setup() {
 }
 
 void loop() {
+  // unsigned long long start = millis();
   if (!client.connected()) {
     reconnect();
   }
   client.loop();
 
   if (millis() - last_time > 1000){
-    Serial.println("No message!");
+    Debugln("No message!");
   }
   if (millis() - last_time > 10000){
     aborted = true;
     digitalWrite(abortSiren, HIGH);
   }
   if (millis() - last_time > 20000){
-    Serial.println("Aborted...");
+    Debugln("Aborted...");
     digitalWrite(ignite, LOW);
     digitalWrite(fill, HIGH);
     digitalWrite(vent, HIGH);
@@ -208,7 +226,7 @@ void loop() {
     }
   }
 
-  if (millis() - last_time_send > delay_time) {
+  /*if (millis() - last_time_send > delay_time) {
     actuation = digitalRead(abortSirenAc) |
                     (digitalRead(igniteAc) << 1) |
                     (digitalRead(fillAc) << 2) |
@@ -216,7 +234,7 @@ void loop() {
                     (digitalRead(dumpAc) << 4) |
                     (digitalRead(qdAc) << 5) |
                     (digitalRead(mpvAc) << 6) |
-                    (digitalRead(purgeAc) << 7);
+                    (digitalRead(purgeAc) << 7);*/
     
     // Check if the message length exceeds the maximum packet size
     /*byte payload[sizeof(actuation)];
@@ -225,7 +243,7 @@ void loop() {
     // Publish the payload
     client.publish("topic", payload, sizeof(payload));
     actuation = 0;*/
-
+     // Debugln(millis() - start);
     last_time_send = millis();
-  }    
+  // }    
 }

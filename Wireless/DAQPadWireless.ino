@@ -276,7 +276,7 @@ void loop()
       long rawConversion = PTADC.cycleSingle();
       float voltageValue = PTADC.convertToVoltage(rawConversion);
 
-      if(i >= 4) continue;
+      if(i >= NUM_PT) continue;
       ptVals[i] = voltageValue;
     }
 
@@ -314,12 +314,12 @@ void loop()
     
     for(int i = 0; i < NUM_PT; i++)
     {
-      sprintf(printStr + strlen(printStr), "P%d: %.2f,", i + 1, ptVals[i]);
+      sprintf(printStr + strlen(printStr), "PT%d: %.2f, ", i + 1, ptVals[i]);
       sprintf(storeStr + strlen(storeStr), "%.2f,", ptVals[i]);
     }
     for(int i = 0; i < NUM_LC; i++)
     {
-      sprintf(printStr + strlen(printStr), "L%d: %.2f,", i + 1, lcVals[i]);
+      sprintf(printStr + strlen(printStr), "LC%d: %.2f,", i + 1, lcVals[i]);
       sprintf(storeStr + strlen(storeStr), "%.2f,", lcVals[i]);
     }
 
