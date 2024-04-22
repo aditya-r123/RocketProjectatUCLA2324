@@ -1,7 +1,7 @@
 #include <WiFi.h>
 #include <PubSubClient.h>
 
-// DEBUGGING
+/********** DEBUGGING MACRO **********/
 
 // COMMENT FOR OPS (NO DEBUGGING)
 #define IF_DEBUG true
@@ -17,6 +17,8 @@
 
 // Null function
 void doNot(char *cstr = "") {}
+
+/*************************************/
 
 // WiFi credentials
 const char* ssid = "UCLA_Rocket_router";

@@ -9,6 +9,27 @@
 #include <WiFi.h>
 #include <PubSubClient.h>
 
+
+/********** DEBUGGING MACRO **********/
+
+// COMMENT FOR OPS (NO DEBUGGING)
+#define IF_DEBUG true
+
+#ifdef IF_DEBUG
+#define Debug Debug
+#define Debugln Debugln
+
+#ifndef IF_DEBUG
+#define Debug doNot
+#define Debugln doNot
+#endif
+
+// Null function
+void doNot(char *cstr = "") {}
+
+/*************************************/
+
+
 // WiFi credentials
 const char* ssid = "UCLA_Rocket_router";
 const char* password = "electronics";
@@ -35,20 +56,20 @@ char storeStr[maxChar];
 void setup_wifi() {
   delay(10);
   // Connect to Wi-Fi network with SSID and password
-  Serial.println();
-  Serial.print("Connecting to ");
-  Serial.println(ssid);
+  Debugln();
+  Debug("Connecting to ");
+  Debugln(ssid);
   WiFi.begin(ssid, password);
 
   while (WiFi.status() != WL_CONNECTED) {
     delay(500);
-    Serial.print(".");
+    Debug(".");
   }
 
-  Serial.println("");
-  Serial.println("WiFi connected");
-  Serial.println("IP address: ");
-  Serial.println(WiFi.localIP());
+  Debugln("");
+  Debugln("WiFi connected");
+  Debugln("IP address: ");
+  Debugln(WiFi.localIP());
 }
 
 
@@ -69,15 +90,15 @@ void callback(char* topic, byte* payload, unsigned int length) {
 void reconnect() {
   // Loop until we're reconnected
   while (!client.connected()) {
-    Serial.print("Attempting MQTT connection...");
+    Debug("Attempting MQTT connection...");
     // Attempt to connect
     if (client.connect("ESP32ClientDAQ"/*, mqtt_username, mqtt_password)*/)) {
-      Serial.println("connected");
+      Debugln("connected");
       //client.subscribe(ac_topic);
     } else {
-      Serial.print("failed, rc=");
-      Serial.print(client.state());
-      Serial.println(" try again in 5 seconds");
+      Debug("failed, rc=");
+      Debug(client.state());
+      Debugln(" try again in 5 seconds");
 
     }
   }
@@ -199,7 +220,7 @@ void setup() {
   SD_SPI->begin(SDCARD_SCK_PIN, SDCARD_MISO_PIN, SDCARD_MOSI_PIN);
 
   if(!SD.begin(SDCARD_SS_PIN, *SD_SPI)){
-    Serial.println("Card Mount Failed");
+    Debugln("Card Mount Failed");
     return;
   }
 
@@ -215,7 +236,7 @@ void setup() {
   // IO EXPANDER (TO CHANGE)
   Adafruit_MCP23X17 mcp;
   if (!mcp.begin_SPI(IOEXPANDER_CSPIN)) {
-    Serial.println("IO Expander Initialization Error");
+    Debugln("IO Expander Initialization Error");
     while (1);
   }
   */
@@ -232,11 +253,11 @@ void setup() {
   // TEMPERATURE MEASUREMENT
   // Initialize TCs
   if (!tc1.begin()) {
-    Serial.println("Could not initialize tc1.");
+    Debugln("Could not initialize tc1.");
     while (1) delay(10);
   }
   if (!tc2.begin()) {
-    Serial.println("Could not initialize tc2.");
+    Debugln("Could not initialize tc2.");
     while (1) delay(10);
   }
   // Set type
@@ -324,7 +345,7 @@ void loop()
     }
 
     // Printing to Serial
-    //Serial.println(printStr.c_str());
+    //Debugln(printStr.c_str());
 
     // Sending via Ethernet Cable
     //digitalWrite(DE_RE_PIN, HIGH);
@@ -332,10 +353,10 @@ void loop()
       strcat(printStr, "\n");
       if (strlen(printStr) <= MQTT_MAX_PACKET_SIZE) {
         client.publish(data_topic, printStr);
-        //Serial.println("Sent:");
-        Serial.println(printStr);
+        //Debugln("Sent:");
+        Debugln(printStr);
       } else {
-        Serial.println("Message too long to publish.");
+        Debugln("Message too long to publish.");
       }
       memset(printStr, 0, sizeof(printStr));
       memset(storeStr, 0, sizeof(storeStr));
@@ -359,51 +380,51 @@ void loop()
     qdAcc = String(digitalRead(qd));
     mpvAcc = String(digitalRead(mpv));
   
-    Serial.print("P1:");
-    Serial.print(pt1vals);
-    Serial.print(" P2:");
-    Serial.print(pt2vals);
-    Serial.print(" P3:");
-    Serial.print(pt3vals);
-    Serial.print(" P4:");
-    Serial.print(pt4vals);
-    Serial.print(" P5:");
-    Serial.print(pt5vals);
-    Serial.print(" LC1:");
-    Serial.print(lc1vals);
-    Serial.print(" AC1:");
-    Serial.print(fillAcc);
-    Serial.print(" AC2:");
-    Serial.print(dumpAcc);
-    Serial.print(" AC3:");
-    Serial.print(ventAcc);
-    Serial.print(" AC4:");
-    Serial.print(qdAcc);
-    Serial.print(" AC5:");
-    Serial.println(mpvAcc);
+    Debug("P1:");
+    Debug(pt1vals);
+    Debug(" P2:");
+    Debug(pt2vals);
+    Debug(" P3:");
+    Debug(pt3vals);
+    Debug(" P4:");
+    Debug(pt4vals);
+    Debug(" P5:");
+    Debug(pt5vals);
+    Debug(" LC1:");
+    Debug(lc1vals);
+    Debug(" AC1:");
+    Debug(fillAcc);
+    Debug(" AC2:");
+    Debug(dumpAcc);
+    Debug(" AC3:");
+    Debug(ventAcc);
+    Debug(" AC4:");
+    Debug(qdAcc);
+    Debug(" AC5:");
+    Debugln(mpvAcc);
     
-    rs485Serial.print("P1:");
-    rs485Serial.print(pt1vals);
-    rs485Serial.print(" P2:");
-    rs485Serial.print(pt2vals);
-    rs485Serial.print(" P3:");
-    rs485Serial.print(pt3vals);
-    rs485Serial.print(" P4:");
-    rs485Serial.print(pt4vals);
-    rs485Serial.print(" P5:");
-    rs485Serial.print(pt5vals);
-    rs485Serial.print(" LC1:");
-    rs485Serial.print(lc1vals);
-    rs485Serial.print(" AC1:");
-    rs485Serial.print(fillAcc);
-    rs485Serial.print(" AC2:");
-    rs485Serial.print(dumpAcc);
-    rs485Serial.print(" AC3:");
-    rs485Serial.print(ventAcc);
-    rs485Serial.print(" AC4:");
-    rs485Serial.print(qdAcc);
-    rs485Serial.print(" AC5:");
-    rs485Serial.println(mpvAcc); */
+    rs485Debug("P1:");
+    rs485Debug(pt1vals);
+    rs485Debug(" P2:");
+    rs485Debug(pt2vals);
+    rs485Debug(" P3:");
+    rs485Debug(pt3vals);
+    rs485Debug(" P4:");
+    rs485Debug(pt4vals);
+    rs485Debug(" P5:");
+    rs485Debug(pt5vals);
+    rs485Debug(" LC1:");
+    rs485Debug(lc1vals);
+    rs485Debug(" AC1:");
+    rs485Debug(fillAcc);
+    rs485Debug(" AC2:");
+    rs485Debug(dumpAcc);
+    rs485Debug(" AC3:");
+    rs485Debug(ventAcc);
+    rs485Debug(" AC4:");
+    rs485Debug(qdAcc);
+    rs485Debug(" AC5:");
+    rs485Debugln(mpvAcc); */
 
 
     last_time = millis();
@@ -413,15 +434,15 @@ void loop()
 // MICROSD CARD READER FUNCTION DEFINITIONS
 
 void readFile(fs::FS &fs, const char * path){
-  Serial.printf("Reading file: %s\n", path);
+  Debugf("Reading file: %s\n", path);
 
   File file = fs.open(path);
   if(!file){
-    Serial.println("Failed to open file for reading");
+    Debugln("Failed to open file for reading");
     return;
   }
 
-  Serial.print("Read from file: ");
+  Debug("Read from file: ");
   while(file.available()){
     Serial.write(file.read());
   }
@@ -429,33 +450,33 @@ void readFile(fs::FS &fs, const char * path){
 }
 
 void writeFile(fs::FS &fs, const char * path, const char * message){
-  Serial.printf("Writing file: %s\n", path);
+  Debugf("Writing file: %s\n", path);
 
   File file = fs.open(path, FILE_WRITE);
   if(!file){
-    Serial.println("Failed to open file for writing");
+    Debugln("Failed to open file for writing");
     return;
   }
   if(file.print(message)){
-    Serial.println("File written");
+    Debugln("File written");
   } else {
-    Serial.println("Write failed");
+    Debugln("Write failed");
   }
   file.close();
 }
 
 void appendFile(fs::FS &fs, const char * path, const char * message){
-  Serial.printf("Appending to file: %s\n", path);
+  Debugf("Appending to file: %s\n", path);
 
   File file = fs.open(path, FILE_APPEND);
   if(!file){
-    Serial.println("Failed to open file for appending");
+    Debugln("Failed to open file for appending");
     return;
   }
   if(file.print(message)){
-      Serial.println("Message appended");
+      Debugln("Message appended");
   } else {
-    Serial.println("Append failed");
+    Debugln("Append failed");
   }
   file.close();
 }
@@ -482,31 +503,31 @@ float calibration_factor = 18980; // Torque load cell
 
 void setup() {
   Serial.begin(9600);
-  Serial.println("HX711 calibration sketch");
-  Serial.println("Remove all weight from scale");
-  Serial.println("After readings begin, place known weight on scale");
-  Serial.println("Press + or a to increase calibration factor");
-  Serial.println("Press - or z to decrease calibration factor");
+  Debugln("HX711 calibration sketch");
+  Debugln("Remove all weight from scale");
+  Debugln("After readings begin, place known weight on scale");
+  Debugln("Press + or a to increase calibration factor");
+  Debugln("Press - or z to decrease calibration factor");
 
   lc1.begin(hx1_data_pin, hx_sck_pin);
   lc1.set_scale();
   lc1.tare(); //Reset the scale to 0
 
   long zero_factor = lc1.read_average(); //Get a baseline reading
-  Serial.print("Zero factor: "); //This can be used to remove the need to tare the scale. Useful in permanent scale projects.
-  Serial.println(zero_factor);
+  Debug("Zero factor: "); //This can be used to remove the need to tare the scale. Useful in permanent scale projects.
+  Debugln(zero_factor);
 }
 
 void loop() {
 
   lc1.set_scale(calibration_factor); //Adjust to this calibration factor
 
-  Serial.print("Reading: ");
-  Serial.print(lc1.get_units());
-  Serial.print(" lbs"); //Change this to kg and re-adjust the calibration factor if you follow SI units like a sane person
-  Serial.print(" calibration_factor: ");
-  Serial.print(calibration_factor);
-  Serial.println();
+  Debug("Reading: ");
+  Debug(lc1.get_units());
+  Debug(" lbs"); //Change this to kg and re-adjust the calibration factor if you follow SI units like a sane person
+  Debug(" calibration_factor: ");
+  Debug(calibration_factor);
+  Debugln();
 
   if(Serial.available())
   {
