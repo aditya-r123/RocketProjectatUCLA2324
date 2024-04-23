@@ -1,25 +1,6 @@
 #include <WiFi.h>
 #include <PubSubClient.h>
 
-/********** DEBUGGING MACRO **********/
-
-// COMMENT FOR OPS (NO DEBUGGING)
-#define IF_DEBUG true
-
-#ifdef IF_DEBUG
-#define Debug Debug
-#define Debugln Debugln
-
-#ifndef IF_DEBUG
-#define Debug doNot
-#define Debugln doNot
-#endif
-
-// Null function
-void doNot(char *cstr = "") {}
-
-/*************************************/
-
 // WiFi credentials
 const char* ssid = "UCLA_Rocket_router";
 const char* password = "electronics";
@@ -65,7 +46,7 @@ short message = 0;
 short actuation = 0;
 bool aborted = false;
 
-unsigned long long delay_time = 100;
+unsigned long long delay_time = 5;
 unsigned long long last_time_send = 0;  
 unsigned long long last_time = 0;  
 
@@ -76,44 +57,44 @@ int relays[] = {abortValve, qd, vent, ignite, purge, fill, dump, outlet, mpv, ab
 void setup_wifi() {
   delay(10);
   // Connect to Wi-Fi network with SSID and password
-  Debugln();
-  Debug("Connecting to ");
-  Debugln(ssid);
+  Serial.println();
+  Serial.print("Connecting to ");
+  Serial.println(ssid);
   WiFi.begin(ssid, password);
 
   while (WiFi.status() != WL_CONNECTED) {
     delay(500);
-    Debug(".");
+    Serial.print(".");
   }
 
-  Debugln("");
-  Debugln("WiFi connected");
-  Debugln("IP address: ");
-  Debugln(WiFi.localIP());
+  Serial.println("");
+  Serial.println("WiFi connected");
+  Serial.println("IP address: ");
+  Serial.println(WiFi.localIP());
 }
 
 void callback(char* topic, byte* payload, unsigned int length) {
   if (length == sizeof(short)) {
-
+    /*if (!isDigit((char)payload[0])){
+      return;
+    }*/    
     memcpy(&message, payload, sizeof(message));
-    
-    // Now 'receivedValue' contains the reconstructed short value
   }
   aborted = false;
   last_time = millis();
-  Debugln(message, BIN);
+  Serial.println(message, BIN);
 }
 
 void reconnect() {
   // Loop until we're reconnected
   unsigned long long disconnect_time = millis();
   while (!client.connected()) {
-    Debugln("Unavailable...");
+    Serial.println("Unavailable...");
     if (millis() - disconnect_time > 10000){
       digitalWrite(abortSiren, HIGH);
     }
     if (millis() - disconnect_time > 20000){
-      Debugln("Aborted...");
+      Serial.println("Aborted...");
       digitalWrite(ignite, LOW);
       digitalWrite(fill, HIGH);
       digitalWrite(vent, HIGH);
@@ -125,16 +106,16 @@ void reconnect() {
       digitalWrite(abortValve, LOW);
     }
 
-    Debug("Attempting MQTT connection...");
+    Serial.print("Attempting MQTT connection...");
     // Attempt to connect
     if (client.connect("ESP32ClientControls"/*, mqtt_username, mqtt_password*/)) {
-      Debugln("connected");
+      Serial.println("connected");
       disconnect_time = millis();
       // Once connected, subscribe to the topic
       client.subscribe(switch_topic, 0);
     } else {
-      Debug("failed, rc=");
-      Debug(client.state());
+      Serial.print("failed, rc=");
+      Serial.print(client.state());
       
     }
   }
@@ -184,21 +165,20 @@ void setup() {
 }
 
 void loop() {
-  // unsigned long long start = millis();
   if (!client.connected()) {
     reconnect();
   }
   client.loop();
 
   if (millis() - last_time > 1000){
-    Debugln("No message!");
+    Serial.println("No message!");
   }
   if (millis() - last_time > 10000){
     aborted = true;
     digitalWrite(abortSiren, HIGH);
   }
   if (millis() - last_time > 20000){
-    Debugln("Aborted...");
+    Serial.println("Aborted...");
     digitalWrite(ignite, LOW);
     digitalWrite(fill, HIGH);
     digitalWrite(vent, HIGH);
@@ -236,7 +216,7 @@ void loop() {
                     (digitalRead(dumpAc) << 4) |
                     (digitalRead(qdAc) << 5) |
                     (digitalRead(mpvAc) << 6) |
-                    (digitalRead(purgeAc) << 7);*/
+                    (digitalRead(purgeAc) << 7);
     
     // Check if the message length exceeds the maximum packet size
     /*byte payload[sizeof(actuation)];
@@ -244,8 +224,8 @@ void loop() {
 
     // Publish the payload
     client.publish("topic", payload, sizeof(payload));
-    actuation = 0;*/
-     // Debugln(millis() - start);
+    actuation = 0;
+
     last_time_send = millis();
-  // }    
+  }*/
 }
