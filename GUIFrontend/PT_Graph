@@ -1,0 +1,299 @@
+{
+  "datasource": {
+    "type": "datasource",
+    "uid": "grafana"
+  },
+  "fieldConfig": {
+    "defaults": {
+      "custom": {
+        "drawStyle": "line",
+        "lineInterpolation": "linear",
+        "barAlignment": 0,
+        "lineWidth": 1,
+        "fillOpacity": 0,
+        "gradientMode": "none",
+        "spanNulls": false,
+        "insertNulls": false,
+        "showPoints": "auto",
+        "pointSize": 5,
+        "stacking": {
+          "mode": "none",
+          "group": "A"
+        },
+        "axisPlacement": "auto",
+        "axisLabel": "",
+        "axisColorMode": "text",
+        "axisBorderShow": false,
+        "scaleDistribution": {
+          "type": "linear"
+        },
+        "axisCenteredZero": false,
+        "hideFrom": {
+          "tooltip": false,
+          "viz": false,
+          "legend": false
+        },
+        "thresholdsStyle": {
+          "mode": "off"
+        }
+      },
+      "color": {
+        "mode": "palette-classic"
+      },
+      "mappings": [],
+      "thresholds": {
+        "mode": "absolute",
+        "steps": [
+          {
+            "color": "green",
+            "value": null
+          },
+          {
+            "color": "red",
+            "value": 80
+          }
+        ]
+      },
+      "max": 900,
+      "unit": "pressurepsi"
+    },
+    "overrides": [
+      {
+        "matcher": {
+          "id": "byName",
+          "options": "pt1"
+        },
+        "properties": [
+          {
+            "id": "displayName",
+            "value": "Tank"
+          },
+          {
+            "id": "unit",
+            "value": "pressurepsi"
+          }
+        ]
+      },
+      {
+        "matcher": {
+          "id": "byName",
+          "options": "pt2"
+        },
+        "properties": [
+          {
+            "id": "displayName",
+            "value": "Pneumatics"
+          },
+          {
+            "id": "unit",
+            "value": "pressurepsi"
+          }
+        ]
+      },
+      {
+        "matcher": {
+          "id": "byName",
+          "options": "pt3"
+        },
+        "properties": [
+          {
+            "id": "displayName",
+            "value": "Fill"
+          },
+          {
+            "id": "unit",
+            "value": "pressurepsi"
+          }
+        ]
+      },
+      {
+        "matcher": {
+          "id": "byName",
+          "options": "pt4"
+        },
+        "properties": [
+          {
+            "id": "displayName",
+            "value": "Chamber"
+          },
+          {
+            "id": "unit",
+            "value": "pressurepsi"
+          }
+        ]
+      },
+      {
+        "matcher": {
+          "id": "byName",
+          "options": "pt5"
+        },
+        "properties": [
+          {
+            "id": "displayName",
+            "value": "Manifold"
+          },
+          {
+            "id": "unit",
+            "value": "pressurepsi"
+          }
+        ]
+      },
+      {
+        "matcher": {
+          "id": "byName",
+          "options": "pt6"
+        },
+        "properties": [
+          {
+            "id": "displayName",
+            "value": "Cross"
+          }
+        ]
+      },
+      {
+        "matcher": {
+          "id": "byName",
+          "options": "Tank"
+        },
+        "properties": [
+          {
+            "id": "color",
+            "value": {
+              "fixedColor": "dark-purple",
+              "mode": "fixed"
+            }
+          }
+        ]
+      },
+      {
+        "matcher": {
+          "id": "byName",
+          "options": "Pneumatics"
+        },
+        "properties": [
+          {
+            "id": "color",
+            "value": {
+              "fixedColor": "dark-blue",
+              "mode": "fixed"
+            }
+          }
+        ]
+      },
+      {
+        "matcher": {
+          "id": "byName",
+          "options": "Fill"
+        },
+        "properties": [
+          {
+            "id": "color",
+            "value": {
+              "fixedColor": "#ffaf06",
+              "mode": "fixed"
+            }
+          }
+        ]
+      },
+      {
+        "matcher": {
+          "id": "byName",
+          "options": "Chamber"
+        },
+        "properties": [
+          {
+            "id": "color",
+            "value": {
+              "fixedColor": "dark-red",
+              "mode": "fixed"
+            }
+          }
+        ]
+      },
+      {
+        "matcher": {
+          "id": "byName",
+          "options": "Manifold"
+        },
+        "properties": [
+          {
+            "id": "color",
+            "value": {
+              "fixedColor": "#83ff00",
+              "mode": "fixed"
+            }
+          }
+        ]
+      },
+      {
+        "matcher": {
+          "id": "byName",
+          "options": "Cross"
+        },
+        "properties": [
+          {
+            "id": "color",
+            "value": {
+              "fixedColor": "#00e8ff",
+              "mode": "fixed"
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "gridPos": {
+    "h": 13,
+    "w": 13,
+    "x": 10,
+    "y": 10
+  },
+  "id": 17,
+  "options": {
+    "tooltip": {
+      "mode": "single",
+      "sort": "none"
+    },
+    "legend": {
+      "showLegend": true,
+      "displayMode": "list",
+      "placement": "bottom",
+      "calcs": []
+    }
+  },
+  "targets": [
+    {
+      "channel": "stream/prometheus_ground_sys/sensorvals2",
+      "datasource": {
+        "type": "datasource",
+        "uid": "grafana"
+      },
+      "filter": {
+        "fields": [
+          "time",
+          "labels",
+          "pt1",
+          "pt2",
+          "pt3",
+          "pt4",
+          "pt5",
+          "pt6"
+        ]
+      },
+      "queryType": "measurements",
+      "refId": "A"
+    }
+  ],
+  "title": "Pressure Transducers (PTs)",
+  "transformations": [
+    {
+      "id": "renameByRegex",
+      "options": {
+        "regex": "(.*)",
+        "renamePattern": "LCX"
+      }
+    }
+  ],
+  "transparent": true,
+  "type": "timeseries"
+}
