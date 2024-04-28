@@ -1,0 +1,247 @@
+{
+  "datasource": {
+    "type": "datasource",
+    "uid": "grafana"
+  },
+  "fieldConfig": {
+    "defaults": {
+      "mappings": [],
+      "thresholds": {
+        "mode": "absolute",
+        "steps": [
+          {
+            "color": "dark-green",
+            "value": null
+          }
+        ]
+      },
+      "color": {
+        "fixedColor": "#0abc5f",
+        "mode": "thresholds"
+      },
+      "decimals": 1,
+      "fieldMinMax": false,
+      "max": 600,
+      "noValue": "NoVal",
+      "unit": "masslb"
+    },
+    "overrides": [
+      {
+        "matcher": {
+          "id": "byName",
+          "options": "pt1"
+        },
+        "properties": [
+          {
+            "id": "displayName",
+            "value": "Tank (1)"
+          },
+          {
+            "id": "unit",
+            "value": "pressurepsi"
+          },
+          {
+            "id": "max"
+          }
+        ]
+      },
+      {
+        "matcher": {
+          "id": "byName",
+          "options": "pt2"
+        },
+        "properties": [
+          {
+            "id": "displayName",
+            "value": "Pneumatics (2)"
+          },
+          {
+            "id": "unit",
+            "value": "pressurepsi"
+          }
+        ]
+      },
+      {
+        "matcher": {
+          "id": "byName",
+          "options": "pt3"
+        },
+        "properties": [
+          {
+            "id": "displayName",
+            "value": "Fill (3)"
+          },
+          {
+            "id": "unit",
+            "value": "pressurepsi"
+          }
+        ]
+      },
+      {
+        "matcher": {
+          "id": "byName",
+          "options": "pt4"
+        },
+        "properties": [
+          {
+            "id": "displayName",
+            "value": "Chamber (4)"
+          },
+          {
+            "id": "unit",
+            "value": "pressurepsi"
+          }
+        ]
+      },
+      {
+        "matcher": {
+          "id": "byName",
+          "options": "pt5"
+        },
+        "properties": [
+          {
+            "id": "displayName",
+            "value": "Manifold (5)"
+          },
+          {
+            "id": "unit",
+            "value": "pressurepsi"
+          }
+        ]
+      },
+      {
+        "matcher": {
+          "id": "byName",
+          "options": "pt6"
+        },
+        "properties": [
+          {
+            "id": "displayName",
+            "value": "Cross (6)"
+          },
+          {
+            "id": "unit",
+            "value": "pressurepsi"
+          }
+        ]
+      },
+      {
+        "matcher": {
+          "id": "byName",
+          "options": "lc1"
+        },
+        "properties": [
+          {
+            "id": "displayName",
+            "value": "Tank (1)"
+          },
+          {
+            "id": "unit",
+            "value": "lbs"
+          },
+          {
+            "id": "max",
+            "value": 50
+          },
+          {
+            "id": "thresholds",
+            "value": {
+              "mode": "absolute",
+              "steps": [
+                {
+                  "color": "dark-red",
+                  "value": null
+                },
+                {
+                  "color": "dark-green",
+                  "value": 1.5
+                }
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "matcher": {
+          "id": "byName",
+          "options": "lc2"
+        },
+        "properties": [
+          {
+            "id": "unit",
+            "value": "lbs"
+          },
+          {
+            "id": "displayName",
+            "value": "Engine (2)"
+          },
+          {
+            "id": "max",
+            "value": 800
+          },
+          {
+            "id": "thresholds",
+            "value": {
+              "mode": "absolute",
+              "steps": [
+                {
+                  "color": "dark-red",
+                  "value": null
+                },
+                {
+                  "color": "dark-yellow",
+                  "value": 1.5002
+                }
+              ]
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "gridPos": {
+    "h": 6,
+    "w": 9,
+    "x": 0,
+    "y": 0
+  },
+  "id": 19,
+  "options": {
+    "reduceOptions": {
+      "values": false,
+      "calcs": [
+        "lastNotNull"
+      ],
+      "fields": ""
+    },
+    "orientation": "auto",
+    "showThresholdLabels": false,
+    "showThresholdMarkers": true,
+    "sizing": "auto",
+    "minVizWidth": 200,
+    "minVizHeight": 200
+  },
+  "pluginVersion": "10.2.3",
+  "targets": [
+    {
+      "channel": "stream/prometheus_ground_sys/sensorvals2",
+      "datasource": {
+        "type": "datasource",
+        "uid": "grafana"
+      },
+      "filter": {
+        "fields": [
+          "time",
+          "labels",
+          "lc1",
+          "lc2"
+        ]
+      },
+      "queryType": "measurements",
+      "refId": "A"
+    }
+  ],
+  "title": "Load Cells (LCs)",
+  "transparent": true,
+  "type": "gauge"
+}
