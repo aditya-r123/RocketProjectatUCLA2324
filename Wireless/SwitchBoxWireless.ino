@@ -1,3 +1,12 @@
+/*
+
+PTs:
+Fill, Pneumatics, Tank, Chamber, Cross, Manfold
+
+LCs:
+Tank, Engine
+*/
+
 #include <WiFi.h>
 #include <PubSubClient.h>
 
@@ -39,50 +48,59 @@ PubSubClient client(espClient);
 #define siren 13 //22
 #define sirenPower 32 //23
 
-unsigned long long delay_time = 100;
+unsigned long long delay_time = 5;
 unsigned long long last_time = 0;
 short message = 0;
-String data = "";
+unsigned long long send_delay = 500;
+unsigned long long send_time = 0;
+
+//String data = "";
 
 //HardwareSerial rs485Serial(2);
 
 void setup_wifi() {
   // Connect to Wi-Fi network with SSID and password
-  Serial.println();
-  Serial.print("Connecting to ");
-  Serial.println(ssid);
+  //Serial.println();
+  //Serial.print("Connecting to ");
+  //Serial.println(ssid);
   WiFi.begin(ssid, password);
 
   while (WiFi.status() != WL_CONNECTED) {
     delay(500);
-    Serial.print(".");
+    //Serial.print(".");
   }
 
-  Serial.println("");
-  Serial.println("WiFi connected");
-  Serial.println("IP address: ");
-  Serial.println(WiFi.localIP());
+  //Serial.println("");
+  //Serial.println("WiFi connected");
+  //Serial.println("IP address: ");
+  //Serial.println(WiFi.localIP());
 }
 
 void callback(char* topic, byte* payload, unsigned int length) {
-  for (int i = 0; i < length; i++) {
+  if (millis() - send_time > send_delay){
+    for (int i = 0; i < length; i++) {
+      if (i == 0 && !isDigit((char)payload[i])){
+        return;
+      }
       Serial.print((char)payload[i]);
+    }
+    send_time = millis();
+    //Serial.println(data);
   }
-  //Serial.println(data);
 }
 
 void reconnect() {
   // Loop until we're reconnected
   while (!client.connected()) {
-    Serial.print("Attempting MQTT connection...");
+    //Serial.print("Attempting MQTT connection...");
     // Attempt to connect
     if (client.connect("ESP32Client"/*, mqtt_username, mqtt_password)*/)) {
-      Serial.println("connected");
+      //Serial.println("connected");
       client.subscribe(data_topic, 0);
     } else {
-      Serial.print("failed, rc=");
-      Serial.print(client.state());
-      Serial.println(" try again in 5 seconds");
+      //Serial.print("failed, rc=");
+      //Serial.print(client.state());
+      //Serial.println(" try again in 5 seconds");
 
     }
   }
@@ -94,6 +112,7 @@ void setup() {
   client.setServer(mqtt_server, mqtt_port);\
   client.setCallback(callback);
 
+  send_time = millis();
 
   pinMode(RE, OUTPUT);
   pinMode(DE, OUTPUT);
@@ -114,19 +133,19 @@ void setup() {
   digitalWrite(sirenPower, HIGH);
   
 
-  Serial.println("Setup Complete");
+  //Serial.println("Setup Complete");
 
   last_time = millis();
 }
 
 void loop() {
+  //unsigned long long start = millis();
   if (!client.connected()) {
     reconnect();
   }
 
   client.loop();
 
-  unsigned long currentMillis = millis();
   // Every X number of seconds 
   // it publishes a new MQTT message
    if((millis() - last_time) > delay_time)
@@ -157,7 +176,7 @@ void loop() {
     //Serial.println(message, BIN);
 
     message = 0; // Clear the message variable
-
+    //Serial.println(millis() - start);
     last_time = millis();
   }
 }
