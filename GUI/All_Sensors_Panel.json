@@ -1,0 +1,240 @@
+{
+  "datasource": {
+    "uid": "grafana",
+    "type": "datasource"
+  },
+  "fieldConfig": {
+    "defaults": {
+      "mappings": [],
+      "thresholds": {
+        "mode": "absolute",
+        "steps": [
+          {
+            "color": "green",
+            "value": null
+          },
+          {
+            "color": "red",
+            "value": 80
+          }
+        ]
+      },
+      "color": {
+        "mode": "thresholds"
+      }
+    },
+    "overrides": [
+      {
+        "matcher": {
+          "id": "byName",
+          "options": "pt1"
+        },
+        "properties": [
+          {
+            "id": "displayName",
+            "value": "Purge"
+          },
+          {
+            "id": "unit",
+            "value": "pressurepsi"
+          }
+        ]
+      },
+      {
+        "matcher": {
+          "id": "byName",
+          "options": "pt2"
+        },
+        "properties": [
+          {
+            "id": "displayName",
+            "value": "Fill"
+          },
+          {
+            "id": "unit",
+            "value": "pressurepsi"
+          }
+        ]
+      },
+      {
+        "matcher": {
+          "id": "byName",
+          "options": "pt3"
+        },
+        "properties": [
+          {
+            "id": "displayName",
+            "value": "Tank"
+          },
+          {
+            "id": "unit",
+            "value": "pressurepsi"
+          }
+        ]
+      },
+      {
+        "matcher": {
+          "id": "byName",
+          "options": "pt4"
+        },
+        "properties": [
+          {
+            "id": "displayName",
+            "value": "Injector"
+          },
+          {
+            "id": "unit",
+            "value": "pressurepsi"
+          }
+        ]
+      },
+      {
+        "matcher": {
+          "id": "byName",
+          "options": "pt5"
+        },
+        "properties": [
+          {
+            "id": "displayName",
+            "value": "Combustion"
+          },
+          {
+            "id": "unit",
+            "value": "pressurepsi"
+          }
+        ]
+      },
+      {
+        "matcher": {
+          "id": "byName",
+          "options": "lc2"
+        },
+        "properties": [
+          {
+            "id": "displayName",
+            "value": "Engine"
+          },
+          {
+            "id": "unit",
+            "value": "masslb"
+          }
+        ]
+      },
+      {
+        "matcher": {
+          "id": "byName",
+          "options": "lc1"
+        },
+        "properties": [
+          {
+            "id": "displayName",
+            "value": "Tank"
+          },
+          {
+            "id": "unit",
+            "value": "masslb"
+          }
+        ]
+      },
+      {
+        "matcher": {
+          "id": "byName",
+          "options": "tc1"
+        },
+        "properties": [
+          {
+            "id": "displayName",
+            "value": "Therm 1"
+          },
+          {
+            "id": "unit",
+            "value": "celsius"
+          }
+        ]
+      },
+      {
+        "matcher": {
+          "id": "byName",
+          "options": "tc2"
+        },
+        "properties": [
+          {
+            "id": "displayName",
+            "value": "Therm 2"
+          },
+          {
+            "id": "unit",
+            "value": "celsius"
+          }
+        ]
+      },
+      {
+        "matcher": {
+          "id": "byName",
+          "options": "pt6"
+        },
+        "properties": [
+          {
+            "id": "unit",
+            "value": "pressurepsi"
+          },
+          {
+            "id": "displayName",
+            "value": "Cross"
+          }
+        ]
+      }
+    ]
+  },
+  "gridPos": {
+    "h": 8,
+    "w": 12,
+    "x": 12,
+    "y": 0
+  },
+  "id": 12,
+  "options": {
+    "reduceOptions": {
+      "values": false,
+      "calcs": [
+        "lastNotNull"
+      ],
+      "fields": ""
+    },
+    "orientation": "auto",
+    "textMode": "auto",
+    "wideLayout": true,
+    "colorMode": "value",
+    "graphMode": "none",
+    "justifyMode": "auto"
+  },
+  "pluginVersion": "10.2.3",
+  "targets": [
+    {
+      "datasource": {
+        "type": "datasource",
+        "uid": "grafana"
+      },
+      "channel": "stream/prometheus_ground_sys/sensorvals",
+      "filter": {
+        "fields": [
+          "time",
+          "pt1",
+          "pt2",
+          "pt3",
+          "pt4",
+          "pt5",
+          "pt6",
+          "lc1",
+          "lc2",
+          "tc1",
+          "tc2"
+        ]
+      },
+      "queryType": "measurements",
+      "refId": "A"
+    }
+  ],
+  "title": "All Sensors",
+  "type": "stat"
+}
