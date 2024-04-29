@@ -1,0 +1,332 @@
+{
+  "datasource": {
+    "type": "datasource",
+    "uid": "grafana"
+  },
+  "fieldConfig": {
+    "defaults": {
+      "mappings": [],
+      "thresholds": {
+        "mode": "absolute",
+        "steps": [
+          {
+            "color": "transparent",
+            "value": null
+          }
+        ]
+      },
+      "color": {
+        "fixedColor": "#0abc5f",
+        "mode": "thresholds"
+      },
+      "decimals": 1,
+      "fieldMinMax": false,
+      "noValue": "NoVal"
+    },
+    "overrides": [
+      {
+        "matcher": {
+          "id": "byName",
+          "options": "pt1"
+        },
+        "properties": [
+          {
+            "id": "displayName",
+            "value": "Tank (1)"
+          },
+          {
+            "id": "unit",
+            "value": "pressurepsi"
+          },
+          {
+            "id": "max"
+          },
+          {
+            "id": "max",
+            "value": 900
+          },
+          {
+            "id": "custom.neutral"
+          },
+          {
+            "id": "thresholds",
+            "value": {
+              "mode": "absolute",
+              "steps": [
+                {
+                  "color": "dark-red",
+                  "value": null
+                },
+                {
+                  "color": "dark-purple",
+                  "value": 15
+                }
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "matcher": {
+          "id": "byName",
+          "options": "pt2"
+        },
+        "properties": [
+          {
+            "id": "displayName",
+            "value": "Pneumatics (2)"
+          },
+          {
+            "id": "unit",
+            "value": "pressurepsi"
+          },
+          {
+            "id": "max",
+            "value": 200
+          },
+          {
+            "id": "thresholds",
+            "value": {
+              "mode": "absolute",
+              "steps": [
+                {
+                  "color": "dark-red",
+                  "value": null
+                },
+                {
+                  "color": "dark-blue",
+                  "value": 15
+                }
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "matcher": {
+          "id": "byName",
+          "options": "pt3"
+        },
+        "properties": [
+          {
+            "id": "displayName",
+            "value": "Fill (3)"
+          },
+          {
+            "id": "unit",
+            "value": "pressurepsi"
+          },
+          {
+            "id": "max",
+            "value": 900
+          },
+          {
+            "id": "thresholds",
+            "value": {
+              "mode": "absolute",
+              "steps": [
+                {
+                  "color": "dark-red",
+                  "value": null
+                },
+                {
+                  "color": "#ef8b04",
+                  "value": 15
+                }
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "matcher": {
+          "id": "byName",
+          "options": "pt4"
+        },
+        "properties": [
+          {
+            "id": "displayName",
+            "value": "Chamber (4)"
+          },
+          {
+            "id": "unit",
+            "value": "pressurepsi"
+          },
+          {
+            "id": "max",
+            "value": 600
+          },
+          {
+            "id": "thresholds",
+            "value": {
+              "mode": "absolute",
+              "steps": [
+                {
+                  "color": "dark-red",
+                  "value": null
+                },
+                {
+                  "color": "red",
+                  "value": 15
+                }
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "matcher": {
+          "id": "byName",
+          "options": "pt5"
+        },
+        "properties": [
+          {
+            "id": "displayName",
+            "value": "Manifold (5)"
+          },
+          {
+            "id": "unit",
+            "value": "pressurepsi"
+          },
+          {
+            "id": "max",
+            "value": 850
+          },
+          {
+            "id": "thresholds",
+            "value": {
+              "mode": "absolute",
+              "steps": [
+                {
+                  "color": "dark-red",
+                  "value": null
+                },
+                {
+                  "color": "#00ff02",
+                  "value": 15
+                }
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "matcher": {
+          "id": "byName",
+          "options": "pt6"
+        },
+        "properties": [
+          {
+            "id": "displayName",
+            "value": "Cross (6)"
+          },
+          {
+            "id": "unit",
+            "value": "pressurepsi"
+          },
+          {
+            "id": "max",
+            "value": 1100
+          },
+          {
+            "id": "thresholds",
+            "value": {
+              "mode": "absolute",
+              "steps": [
+                {
+                  "color": "dark-red",
+                  "value": null
+                },
+                {
+                  "color": "#00ffe4",
+                  "value": 15
+                }
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "matcher": {
+          "id": "byName",
+          "options": "lc1"
+        },
+        "properties": [
+          {
+            "id": "displayName",
+            "value": "Tank (1)"
+          },
+          {
+            "id": "unit",
+            "value": "lbs"
+          }
+        ]
+      },
+      {
+        "matcher": {
+          "id": "byName",
+          "options": "lc2"
+        },
+        "properties": [
+          {
+            "id": "unit",
+            "value": "lbs"
+          },
+          {
+            "id": "displayName",
+            "value": "Engine (2)"
+          }
+        ]
+      }
+    ]
+  },
+  "gridPos": {
+    "h": 10,
+    "w": 15,
+    "x": 9,
+    "y": 0
+  },
+  "id": 20,
+  "options": {
+    "reduceOptions": {
+      "values": false,
+      "calcs": [
+        "lastNotNull"
+      ],
+      "fields": ""
+    },
+    "orientation": "auto",
+    "showThresholdLabels": false,
+    "showThresholdMarkers": true,
+    "sizing": "auto",
+    "minVizWidth": 200,
+    "minVizHeight": 200
+  },
+  "pluginVersion": "10.2.3",
+  "targets": [
+    {
+      "channel": "stream/prometheus_ground_sys/sensorvals2",
+      "datasource": {
+        "type": "datasource",
+        "uid": "grafana"
+      },
+      "filter": {
+        "fields": [
+          "time",
+          "labels",
+          "pt1",
+          "pt2",
+          "pt3",
+          "pt4",
+          "pt5",
+          "pt6"
+        ]
+      },
+      "queryType": "measurements",
+      "refId": "A"
+    }
+  ],
+  "title": "Pressure Transducers (PTs)",
+  "transparent": true,
+  "type": "gauge"
+}
