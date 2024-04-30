@@ -1,1 +1,104 @@
-[insert]
+{
+  "datasource": {
+    "type": "datasource",
+    "uid": "grafana"
+  },
+  "fieldConfig": {
+    "defaults": {
+      "mappings": [
+        {
+          "options": {
+            "0": {
+              "color": "dark-red",
+              "index": 0,
+              "text": "OFF/DEA"
+            },
+            "1": {
+              "color": "dark-green",
+              "index": 1,
+              "text": "ON/ACT"
+            }
+          },
+          "type": "value"
+        }
+      ],
+      "thresholds": {
+        "mode": "absolute",
+        "steps": [
+          {
+            "color": "dark-blue",
+            "value": null
+          }
+        ]
+      },
+      "min": -9,
+      "unit": "short"
+    },
+    "overrides": [
+      {
+        "matcher": {
+          "id": "byName",
+          "options": "dump"
+        },
+        "properties": [
+          {
+            "id": "displayName",
+            "value": "Dump"
+          }
+        ]
+      },
+      {
+        "matcher": {
+          "id": "byName",
+          "options": "vent"
+        },
+        "properties": [
+          {
+            "id": "displayName",
+            "value": "Vent"
+          }
+        ]
+      }
+    ]
+  },
+  "gridPos": {
+    "h": 4,
+    "w": 10,
+    "x": 0,
+    "y": 0
+  },
+  "id": 21,
+  "options": {
+    "reduceOptions": {
+      "values": false,
+      "calcs": [
+        "lastNotNull"
+      ],
+      "fields": "",
+      "limit": 24
+    },
+    "orientation": "auto",
+    "textMode": "auto",
+    "wideLayout": true,
+    "colorMode": "background",
+    "graphMode": "none",
+    "justifyMode": "auto"
+  },
+  "pluginVersion": "10.2.3",
+  "targets": [
+    {
+      "channel": "stream/prometheus_ground_sys_octocoupler/octovals",
+      "datasource": {
+        "type": "datasource",
+        "uid": "grafana"
+      },
+      "filter": {
+        "fields": []
+      },
+      "queryType": "measurements",
+      "refId": "A"
+    }
+  ],
+  "title": "Octocoupler",
+  "type": "stat"
+}
