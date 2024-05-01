@@ -6,8 +6,8 @@ import os
 import random
 
 # MODIFY PORT AND BAUDRATE
-# PORT = '/dev/cu.usbserial-0001' #--> UNCOMMENT THIS
-PORT = '/dev/cu.SLAB_USBtoUART'
+# PORT = '/dev/cu.usbserial-0001' 
+PORT = '/dev/cu.SLAB_USBtoUART' #--> UNCOMMENT THIS
 # PORT = '/dev/cu.usbmodem131488301'
 BAUDRATE = 115200
 MAX_COUNT = -31 #######Change this
