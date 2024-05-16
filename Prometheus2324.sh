@@ -11,7 +11,7 @@ cd "$directory" || { echo "Directory not found"; exit 1; }
 terminal_emulator="xterm"
 
 # Open a new terminal window and execute the first Python file
-$terminal_emulator -e "telegraf --config SensorVals" &
+$terminal_emulator -e "telegraf --config SensorVals.conf" &
 
 # Open a new terminal window and execute the second Python file
 $terminal_emulator -e "telegraf --config OctocouplerStates.conf" &
