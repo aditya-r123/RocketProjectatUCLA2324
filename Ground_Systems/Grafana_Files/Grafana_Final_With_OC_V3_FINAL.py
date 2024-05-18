@@ -51,11 +51,10 @@ while True:
     timestamp = str(getTime())
     #line2 = ser.readline() #--> UNCOMMENT THIS
     #packet_counter += 1
-
     if packet_counter != MAX_COUNT:
         #line = line2.decode() #--> UNCOMMENT THIS
-        line = "100,200,300,100,300,600,20,200,10111100"
-        Line = line[:-1]
+        line = "10,20,30,40,90,60,100,300,10100100" #--> COMMENT THIS
+        #Line = line[:-1]
         line = line.strip().replace(" ", "")  # Clean the input line
         # Split the input line into individual values
         data = line.split(',')
@@ -64,26 +63,18 @@ while True:
         opto_data = [int(x.strip()) for x in opto_dataa.split(',')]
         sensor_data = data[:-1]
         print(sensor_data)
-
-        # Reset packet counter
         packet_counter = 0
-
-        # Prepare and send data for sensor values
         fields = ''
         for key, val in zip(field_keys, sensor_data):
             fields += f'{key}={val},'
         fields = fields.strip(',')
-
         influx_string = measurement + ' ' + fields + ' ' + timestamp
         print(influx_string)
         UDPClientSocket.sendto(influx_string.encode(), serverAddressPort)
-
-        # Prepare and send data for opto values
         fields2 = ''
         for key2, val2 in zip(field_keys2, opto_data):
             fields2 += f'{key2}={val2},'
         fields2 = fields2.strip(',')
-
         influx_string2 = measurement2 + ' ' + fields2 + ' ' + timestamp
         print(influx_string2)
         UDPClientSocket.sendto(influx_string2.encode(), serverAddressPort2)
