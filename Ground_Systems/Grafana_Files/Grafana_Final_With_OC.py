@@ -54,7 +54,7 @@ while True:
 
     if packet_counter != MAX_COUNT:
         #line = line2.decode() #--> UNCOMMENT THIS
-        line = "0.1233 PT1: 100, PT2: 200, PT3: 300, PT4: 400, PT5: 900, PT6: 600, LC1: 100, LC2: 200|Siren: 0, Ignite: 0, Fill: 0, Vent: 0, Dump: 0, QD: 1, MPV: 0, Purge: 0"
+        line = "0.1233 PT1: 100, PT2: 200, PT3: 300, PT4: 400, PT5: 900, PT6: 600, LC1: 100, LC2: 200|S: 0, I: 0, F: 0, V: 0, D: 0, Q: 1, M: 0, P: 0"
 
     
         '''    
