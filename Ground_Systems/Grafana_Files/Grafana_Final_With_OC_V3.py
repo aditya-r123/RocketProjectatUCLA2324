@@ -54,7 +54,7 @@ while True:
 
     if packet_counter != MAX_COUNT:
         #line = line2.decode() #--> UNCOMMENT THIS
-        line = "100, 200, 300, 400, 900, 600, 20, 200, 10100100"
+        line = "100,200,300,100,300,600,20,200,10111100"
         Line = line[:-1]
         line = line.strip().replace(" ", "")  # Clean the input line
         # Split the input line into individual values
