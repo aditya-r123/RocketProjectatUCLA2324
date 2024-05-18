@@ -50,7 +50,7 @@ while True:
     #packet_counter += 1
     if packet_counter != MAX_COUNT:
         #line = line2.decode() #--> UNCOMMENT THIS
-        line = "10,20,30,40,90,60,100,300,111111011" #--> COMMENT THIS
+        line = "10,20,30,40,90,60,100,300,101011011" #--> COMMENT THIS
         line = line.strip().replace(" ", "")  # Clean the input line
         # Split the input line into individual values
         data = line.split(',')
@@ -71,8 +71,8 @@ while True:
         for key2, val2 in zip(field_keys2, opto_data):
             fields2 += f'{key2}={val2},'
         fields2 = fields2.strip(',')
-        influx_string2 = measurement2 + ' ' + fields2 + ' ' + timestamp
+        influx_string2 = measurement2 + ' ' + fields2
         print(influx_string2)
         UDPClientSocket.sendto(influx_string2.encode(), serverAddressPort2)
 
-        time.sleep(0.24)
+        time.sleep(0.24) #--> COMMENT THIS
