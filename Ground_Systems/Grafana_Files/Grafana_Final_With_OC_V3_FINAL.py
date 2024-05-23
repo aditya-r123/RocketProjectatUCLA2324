@@ -74,5 +74,3 @@ while True:
         influx_string2 = measurement2 + ' ' + fields2
         print(influx_string2)
         UDPClientSocket.sendto(influx_string2.encode(), serverAddressPort2)
-
-        time.sleep(0.24) #--> COMMENT THIS
