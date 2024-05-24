@@ -61,8 +61,8 @@ unsigned long long send_time = 0;
 void setup_wifi() {
   // Connect to Wi-Fi network with SSID and password
   //Serial.println();
-  //Serial.print("Connecting to ");
-  //Serial.println(ssid);
+  Serial.print("Connecting to ");
+  Serial.println(ssid);
   WiFi.begin(ssid, password);
 
   while (WiFi.status() != WL_CONNECTED) {
@@ -71,7 +71,7 @@ void setup_wifi() {
   }
 
   //Serial.println("");
-  //Serial.println("WiFi connected");
+  Serial.println("WiFi connected");
   //Serial.println("IP address: ");
   //Serial.println(WiFi.localIP());
 }
@@ -79,7 +79,7 @@ void setup_wifi() {
 void callback(char* topic, byte* payload, unsigned int length) {
   if (millis() - send_time > send_delay){
     for (int i = 0; i < length; i++) {
-      if (i == 0 && !isDigit((char)payload[i])){
+      if (i == 0 && isDigit((char)payload[i])){
         return;
       }
       Serial.print((char)payload[i]);
@@ -92,10 +92,10 @@ void callback(char* topic, byte* payload, unsigned int length) {
 void reconnect() {
   // Loop until we're reconnected
   while (!client.connected()) {
-    //Serial.print("Attempting MQTT connection...");
+    Serial.print("Attempting MQTT connection...");
     // Attempt to connect
     if (client.connect("ESP32Client"/*, mqtt_username, mqtt_password)*/)) {
-      //Serial.println("connected");
+      Serial.println("connected");
       client.subscribe(data_topic, 0);
     } else {
       //Serial.print("failed, rc=");
