@@ -55,15 +55,11 @@ void setup_wifi() {
 void callback(char* topic, byte* payload, unsigned int length) {
   if (length == sizeof(short)) {
     short recieved;
-    if (isDigit((char)payload[0])){
-      memcpy(&recieved, payload, sizeof(recieved));
-    }    
+    memcpy(&recieved, payload, sizeof(recieved));
 
-    for (int i = 0; i < 9; i++){
+    for (int i = 0; i < 8; i++){
       actuation[i] = (char)(((recieved >> i) & 1) + '0');
     }
-    actuation[9] = ',';
-    actuation[10] = ' ';
     // Now 'receivedValue' contains the reconstructed short value
   }
 }
@@ -76,7 +72,7 @@ void reconnect() {
     // Attempt to connect
     if (client.connect("ESP32ClientDAQ"/*, mqtt_username, mqtt_password)*/)) {
       Serial.println("connected");
-      //client.subscribe(ac_topic);
+      client.subscribe(ac_topic);
     } else {
       Serial.print("failed, rc=");
       Serial.print(client.state());
@@ -168,7 +164,7 @@ void setup() {
   Serial.begin(115200);
   setup_wifi();
   client.setServer(mqtt_server, mqtt_port);\
-  //client.setCallback(callback);
+  client.setCallback(callback);
 
   // ETHERNET CONNECTION
   pinMode(DE_RE_PIN, OUTPUT);
@@ -266,14 +262,10 @@ void loop()
 
   if((millis() - last_time) > delay_time)
   {
-    //if (strlen(actuation) != 0){
-      //strcat(printStr, actuation);
-      //strcat(storeStr, actuation);
-    //}
 
       // Create variables for all sensors
     float ptVals[6], lcVals[2], tcVals[2]; // TC1: Type T TC, TC2: Type K TC
-    sprintf(printStr, "%llu ", millis());
+    //sprintf(printStr, "%llu ", millis());
     storeStr += String(millis()) + ",";
 
     // Read Pressure Transducer values
@@ -320,12 +312,12 @@ void loop()
     
     for(int i = 0; i < NUM_PT; i++)
     {
-      sprintf(printStr + strlen(printStr), "PT%d: %.2f, ", i + 1, ptVals[i]);
+      sprintf(printStr + strlen(printStr), "%.2f,", ptVals[i]);
       storeStr += String(ptVals[i], 3) + ",";
     }
     for(int i = 0; i < NUM_LC; i++)
     {
-      sprintf(printStr + strlen(printStr), "LC%d: %.2f, ", i + 1, lcVals[i]);
+      sprintf(printStr + strlen(printStr), "%.2f,", lcVals[i]);
       storeStr += String(lcVals[i]) + ",";
     }
 
@@ -335,6 +327,7 @@ void loop()
     // Sending via Ethernet Cable
     //digitalWrite(DE_RE_PIN, HIGH);
     //delay(50);
+      strcat(printStr, actuation);
       strcat(printStr, "\n");
       if (strlen(printStr) <= MQTT_MAX_PACKET_SIZE) {
         client.publish(data_topic, printStr);
@@ -346,7 +339,7 @@ void loop()
 
     // Storing to microSD Card
     storeStr += "\n";
-    Serial.print(storeStr);
+    Serial.print(printStr);
     appendFile(SD, sd_fileName.c_str(), storeStr.c_str());
 
     memset(printStr, 0, sizeof(printStr));
