@@ -20,7 +20,7 @@ PubSubClient client(espClient);
 
 #define RO_PIN 16
 #define DI_PIN 17
-#define outlet 2 //32
+#define outlet 15 //32
 //#define SER_BUF_SIZE 1024
 #define fill 22
 #define dump 21 
@@ -28,18 +28,20 @@ PubSubClient client(espClient);
 #define qd 18
 #define purge 5
 #define mpv 4
-#define ignite 15
-#define abortSiren 23
+#define ignite 23
+#define abortSiren 27
 #define abortValve 13
+//#define extra1 15
+//#define extra2 14
 
-#define fillAc 34
-#define dumpAc 35
-#define ventAc 32
-#define qdAc 33
-#define purgeAc 25
-#define mpvAc 26
-#define abortSirenAc 27
-#define igniteAc 14
+#define fillAc 36
+#define dumpAc 39
+#define ventAc 34
+#define qdAc 35
+#define purgeAc 32
+#define mpvAc 33
+#define abortSirenAc 25
+#define igniteAc 26
 
 const short ACTUATED = 0x1;
 short message = 0;
@@ -208,7 +210,7 @@ void loop() {
     }
   }
 
-  /*if (millis() - last_time_send > delay_time) {
+  if (millis() - last_time_send > delay_time) {
     actuation = digitalRead(abortSirenAc) |
                     (digitalRead(igniteAc) << 1) |
                     (digitalRead(fillAc) << 2) |
@@ -219,13 +221,16 @@ void loop() {
                     (digitalRead(purgeAc) << 7);
     
     // Check if the message length exceeds the maximum packet size
-    /*byte payload[sizeof(actuation)];
+    byte payload[sizeof(actuation)];
     memcpy(payload, &actuation, sizeof(actuation));
 
     // Publish the payload
-    client.publish("topic", payload, sizeof(payload));
+    client.publish(ac_topic, payload, sizeof(payload));
+    //actuation = actuation | 1 << 8;
+    //Serial.println("Sent: ");
+    //Serial.println(actuation, BIN);
     actuation = 0;
 
     last_time_send = millis();
-  }*/
+  }
 }
