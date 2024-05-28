@@ -1,0 +1,140 @@
+{
+  "datasource": {
+    "type": "datasource",
+    "uid": "grafana"
+  },
+  "fieldConfig": {
+    "defaults": {
+      "custom": {
+        "hideFrom": {
+          "tooltip": false,
+          "viz": false,
+          "legend": false
+        }
+      },
+      "mappings": [],
+      "thresholds": {
+        "mode": "absolute",
+        "steps": [
+          {
+            "color": "green",
+            "value": null
+          },
+          {
+            "color": "red",
+            "value": 80
+          }
+        ]
+      },
+      "color": {
+        "mode": "thresholds"
+      },
+      "decimals": 7
+    },
+    "overrides": []
+  },
+  "gridPos": {
+    "h": 17,
+    "w": 10,
+    "x": 0,
+    "y": 0
+  },
+  "id": 2,
+  "options": {
+    "view": {
+      "allLayers": true,
+      "id": "coords",
+      "lat": 35.384254,
+      "lon": -117.796052,
+      "zoom": 10.88,
+      "lastOnly": false,
+      "layer": "Layer 1"
+    },
+    "controls": {
+      "showZoom": true,
+      "mouseWheelZoom": true,
+      "showAttribution": true,
+      "showScale": false,
+      "showMeasure": false,
+      "showDebug": false
+    },
+    "tooltip": {
+      "mode": "details"
+    },
+    "basemap": {
+      "config": {
+        "server": "streets"
+      },
+      "name": "Layer 0",
+      "type": "esri-xyz"
+    },
+    "layers": [
+      {
+        "config": {
+          "arrow": 0,
+          "style": {
+            "color": {
+              "fixed": "dark-blue"
+            },
+            "lineWidth": 2,
+            "opacity": 1,
+            "rotation": {
+              "fixed": 0,
+              "max": 360,
+              "min": -360,
+              "mode": "mod"
+            },
+            "size": {
+              "fixed": 1,
+              "max": 15,
+              "min": 2
+            },
+            "symbol": {
+              "fixed": "img/icons/marker/circle.svg",
+              "mode": "fixed"
+            },
+            "symbolAlign": {
+              "horizontal": "center",
+              "vertical": "center"
+            },
+            "textConfig": {
+              "fontSize": 12,
+              "offsetX": 0,
+              "offsetY": 0,
+              "textAlign": "center",
+              "textBaseline": "middle"
+            }
+          }
+        },
+        "location": {
+          "mode": "auto"
+        },
+        "name": "Layer 1",
+        "tooltip": true,
+        "type": "route"
+      }
+    ]
+  },
+  "pluginVersion": "10.2.3",
+  "targets": [
+    {
+      "channel": "stream/prometheus_avionics/avionics",
+      "datasource": {
+        "type": "datasource",
+        "uid": "grafana"
+      },
+      "filter": {
+        "fields": [
+          "time",
+          "labels",
+          "lat",
+          "lon"
+        ]
+      },
+      "queryType": "measurements",
+      "refId": "A"
+    }
+  ],
+  "title": "GPS Coordinates",
+  "type": "geomap"
+}
