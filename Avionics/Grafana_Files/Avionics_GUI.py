@@ -40,8 +40,11 @@ while True:
 
     if packet_counter != MAX_COUNT:
         #line = line2.decode() #--> UNCOMMENT THIS
-        line = "100,110,300,400,500,60,0.1,0.2,0.3,52.2297,21.0122"  # COMMENT THIS
-        line += f",{random.randint(0, 300)}"
+        line = "100,110,300,400,500,60,0.1,0.2,0.3"
+        random_lat_int = random.uniform(35.32, 35.33)
+        line += f",{random_lat_int:.3f}"
+        random_long_int = random.uniform(-117.77, -117.79)
+        line += f",{random_long_int:.3f}"
         # Original string            
         print(line)
         # this starts the string at the first PT
@@ -63,4 +66,4 @@ while True:
         influx_string = measurement + ' ' + fields + ' ' + timestamp
         print(influx_string)
         UDPClientSocket.sendto(influx_string.encode(), serverAddressPort)
-        time.sleep(0.25)
+        time.sleep(0.35)
