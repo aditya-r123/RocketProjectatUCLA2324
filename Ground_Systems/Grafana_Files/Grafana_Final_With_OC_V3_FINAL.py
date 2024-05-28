@@ -13,7 +13,7 @@ measurement = 'sensorvals'
 measurement2 = 'octovals'
 
 field_keys = ["pt1", "pt2", "pt3", "pt4", "pt5", "pt6", "lc1", "lc2"]
-field_keys2 = ["ignite", "fill", "dump", "vent", "qd", "purge", "mpv", "siren"]
+field_keys2 = ["siren", "ignite", "fill", "vent", "dump", "qd", "mpv", "purge"]
 
 # just in case
 def getTime():
@@ -31,46 +31,34 @@ N = 3
 packet_counter = 0
 
 while True:
-    try:
-        print('ser\n')
-        print(ser)
-        ser = Serial(PORT, BAUDRATE, timeout=0.1)
-        print('ser\n')
-        print("ser")
-        print('ser\n')
-    except:
-        continue
-    finally:
-        print('Successfully connected to Serial device')
-        break
-
-while True:
     timestamp = str(getTime())
     line2 = ser.readline() #--> UNCOMMENT THIS
-    #packet_counter += 1
-    if packet_counter != MAX_COUNT:
+    # packet_counter += 1
+    if packet_counter != MAX_COUNT and len(line2) > 12 and len(line2) < 85:
         line = line2.decode() #--> UNCOMMENT THIS
-        #line = "10,20,30,40,90,60,100,300,101011011" #--> COMMENT THIS
-        line = line.strip().replace(" ", "")  # Clean the input line
-        # Split the input line into individual values
-        data = line.split(',')
-        opto_dataa = ", ".join(data[-1])
-        print(opto_dataa)
-        opto_data = [int(x.strip()) for x in opto_dataa.split(',')]
-        sensor_data = data[:-1]
-        print(sensor_data)
-        packet_counter = 0
-        fields = ''
-        for key, val in zip(field_keys, sensor_data):
-            fields += f'{key}={val},'
-        fields = fields.strip(',')
-        influx_string = measurement + ' ' + fields + ' ' + timestamp
-        print(influx_string)
-        UDPClientSocket.sendto(influx_string.encode(), serverAddressPort)
-        fields2 = ''
-        for key2, val2 in zip(field_keys2, opto_data):
-            fields2 += f'{key2}={val2},'
-        fields2 = fields2.strip(',')
-        influx_string2 = measurement2 + ' ' + fields2
-        print(influx_string2)
-        UDPClientSocket.sendto(influx_string2.encode(), serverAddressPort2)
+        print(line)
+        if line.count(',') == 8:  # Check if there are exactly 8 commas
+            #print(line)
+            line = line.strip().replace(" ", "")  # Clean the input line
+            # Split the input line into individual values
+            data = line.split(',')
+            opto_dataa = ", ".join(data[-1])
+            #print(opto_dataa)
+            opto_data = [(x.strip()) for x in opto_dataa.split(',')]
+            sensor_data = data[:-1]
+            #print(sensor_data)
+            packet_counter = 0
+            fields = ''
+            for key, val in zip(field_keys, sensor_data):
+                fields += f'{key}={val},'
+            fields = fields.strip(',')
+            influx_string = measurement + ' ' + fields + ' ' + timestamp
+            #print(influx_string)
+            UDPClientSocket.sendto(influx_string.encode(), serverAddressPort)
+            fields2 = ''
+            for key2, val2 in zip(field_keys2, opto_data):
+                fields2 += f'{key2}={val2},'
+            fields2 = fields2.strip(',')
+            influx_string2 = measurement2 + ' ' + fields2
+            #print(influx_string2)
+            UDPClientSocket.sendto(influx_string2.encode(), serverAddressPort2)
