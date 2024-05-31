@@ -292,12 +292,12 @@ void loop()
     
   
     // Calibration for PTs (likely have to calibrate everytime you flow)
-    ptVals[0] = ptVals[0] * 448 - 134;
-    ptVals[1] = ptVals[1] * 330 - 74.2;
-    ptVals[2] = ptVals[2] * 442 - 72.2;
-    ptVals[3] = ptVals[3] * 326 - 69.8;
-    ptVals[4] = ptVals[4] * 434 - 120;
-    ptVals[5] = ptVals[5] * 453 - 124;
+    ptVals[0] = ptVals[0] * 473 - 125;
+    ptVals[1] = ptVals[1] * 360 - 75.5;
+    ptVals[2] = ptVals[2] * 470 - 62.2;
+    ptVals[3] = ptVals[3] * 358 - 77.6;
+    ptVals[4] = ptVals[4] * 478 - 121;
+    ptVals[5] = ptVals[5] * 421 - 244;
   
     // Sending over Ethernet cable (convert all data to Strings)
     // digitalWrite(DE_RE_PIN, HIGH);
