@@ -61,8 +61,8 @@ unsigned long long send_time = 0;
 void setup_wifi() {
   // Connect to Wi-Fi network with SSID and password
   //Serial.println();
-  Serial.print("Connecting to ");
-  Serial.println(ssid);
+  //Serial.print("Connecting to ");
+  //Serial.println(ssid);
   WiFi.begin(ssid, password);
 
   while (WiFi.status() != WL_CONNECTED) {
@@ -71,17 +71,14 @@ void setup_wifi() {
   }
 
   //Serial.println("");
-  Serial.println("WiFi connected");
+  //Serial.println("WiFi connected");
   //Serial.println("IP address: ");
   //Serial.println(WiFi.localIP());
 }
 
 void callback(char* topic, byte* payload, unsigned int length) {
-  if (millis() - send_time > send_delay){
+  if (millis() - send_time > send_delay && length > 10){
     for (int i = 0; i < length; i++) {
-      if (i == 0 && isDigit((char)payload[i])){
-        return;
-      }
       Serial.print((char)payload[i]);
     }
     send_time = millis();
@@ -92,10 +89,10 @@ void callback(char* topic, byte* payload, unsigned int length) {
 void reconnect() {
   // Loop until we're reconnected
   while (!client.connected()) {
-    Serial.print("Attempting MQTT connection...");
+    //Serial.print("Attempting MQTT connection...");
     // Attempt to connect
     if (client.connect("ESP32Client"/*, mqtt_username, mqtt_password)*/)) {
-      Serial.println("connected");
+      //Serial.println("connected");
       client.subscribe(data_topic, 0);
     } else {
       //Serial.print("failed, rc=");
@@ -157,10 +154,9 @@ void loop() {
                     (digitalRead(purge) << 4) |
                     (digitalRead(fill) << 5) |
                     (digitalRead(dump) << 6) |
-                    (digitalRead(heatpad) << 7) |
+                    (/*digitalRead(heatpad)*/0 << 7) |
                     (digitalRead(mpv) << 8) |
-                    (digitalRead(siren) << 9) |
-                    (1 << 10);
+                    (digitalRead(siren) << 9);
 
     //message = ('A' + AbortValve + QD + Vent + Ignite + Purge + Fill + Dump + Heatpad + MPV + Siren + 'Z');
 
