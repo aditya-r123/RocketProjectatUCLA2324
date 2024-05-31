@@ -101,6 +101,7 @@ void reconnect() {
       digitalWrite(fill, HIGH);
       digitalWrite(vent, HIGH);
       digitalWrite(dump, HIGH);
+      digitalWrite(outlet, HIGH);
       digitalWrite(qd, HIGH);
       digitalWrite(mpv, HIGH);
       digitalWrite(purge, HIGH);
@@ -185,6 +186,7 @@ void loop() {
     digitalWrite(fill, HIGH);
     digitalWrite(vent, HIGH);
     digitalWrite(dump, HIGH);
+    digitalWrite(outlet, HIGH);
     digitalWrite(qd, HIGH);
     digitalWrite(mpv, HIGH);
     digitalWrite(purge, HIGH);
