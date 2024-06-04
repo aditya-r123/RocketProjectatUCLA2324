@@ -14,6 +14,7 @@ measurement2 = 'octovals'
 
 field_keys = ["pt1", "pt2", "pt3", "pt4", "pt5", "pt6", "lc1", "lc2"]
 field_keys2 = ["siren", "ignite", "fill", "vent", "dump", "qd", "mpv", "purge"]
+#field_keys2 = ["siren", "ignite", "fill", "dump", "vent", "qd", "purge", "mpv"]
 
 # just in case
 def getTime():
