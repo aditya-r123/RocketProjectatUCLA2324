@@ -38,13 +38,15 @@ while True:
     #packet_counter += 1
 
     if packet_counter != MAX_COUNT:
-        line = line2.decode() #--> UNCOMMENT THIS
-        print(line)
-        #line = "104.69,104.11,0.90,8.62,4.64,0.00,0.00,0"
-        #random_lat_int = random.uniform(35.32, 35.33)
-        #line += f",{random_lat_int:.3f}"
-        #random_long_int = random.uniform(-117.77, -117.79)
-        #line += f",{random_long_int:.3f}"
+        #line = line2.decode() #--> UNCOMMENT THIS
+        '''
+        line = "104.69,490.11,0.90,8.62,4.64"
+        random_lat_int = random.uniform(35.32, 35.33)
+        line += f",{random_lat_int:.3f}"
+        random_long_int = random.uniform(-117.77, -117.79)
+        line += f",{random_long_int:.3f}"
+        line += ",66"
+        '''
         # Original string            
         print(line)
         # this starts the string at the first PT
