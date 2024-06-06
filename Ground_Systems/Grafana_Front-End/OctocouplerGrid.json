@@ -18,7 +18,7 @@
       "color": {
         "mode": "thresholds"
       },
-      "unit": "short"
+      "unit": "none"
     },
     "overrides": [
       {
@@ -29,25 +29,25 @@
         "properties": [
           {
             "id": "displayName",
-            "value": "IG"
+            "value": "IGNITE"
           },
           {
             "id": "mappings",
             "value": [
               {
-                "type": "value",
                 "options": {
                   "0": {
-                    "color": "dark-green",
+                    "color": "dark-red",
                     "index": 0,
-                    "text": "DEA/CLO"
+                    "text": "CLOSED"
                   },
                   "1": {
-                    "color": "dark-red",
+                    "color": "dark-green",
                     "index": 1,
-                    "text": "ACC/OPE"
+                    "text": "OPENED"
                   }
-                }
+                },
+                "type": "value"
               }
             ]
           }
@@ -67,19 +67,19 @@
             "id": "mappings",
             "value": [
               {
-                "type": "value",
                 "options": {
                   "0": {
-                    "color": "dark-green",
+                    "color": "dark-red",
                     "index": 0,
-                    "text": "DEA/CLO"
+                    "text": "CLOSED"
                   },
                   "1": {
-                    "color": "dark-red",
+                    "color": "dark-green",
                     "index": 1,
-                    "text": "ACC/OPE"
+                    "text": "OPENED"
                   }
-                }
+                },
+                "type": "value"
               }
             ]
           }
@@ -99,19 +99,19 @@
             "id": "mappings",
             "value": [
               {
-                "type": "value",
                 "options": {
                   "0": {
-                    "color": "dark-green",
+                    "color": "dark-red",
                     "index": 0,
-                    "text": "DEA/CLO"
+                    "text": "CLOSED"
                   },
                   "1": {
-                    "color": "dark-red",
+                    "color": "dark-green",
                     "index": 1,
-                    "text": "ACC/OPE"
+                    "text": "OPENED"
                   }
-                }
+                },
+                "type": "value"
               }
             ]
           }
@@ -131,19 +131,19 @@
             "id": "mappings",
             "value": [
               {
-                "type": "value",
                 "options": {
                   "0": {
-                    "color": "dark-green",
+                    "color": "dark-red",
                     "index": 0,
-                    "text": "DEA/CLO"
+                    "text": "CLOSED"
                   },
                   "1": {
-                    "color": "dark-red",
+                    "color": "dark-green",
                     "index": 1,
-                    "text": "ACC/OPE"
+                    "text": "OPENED"
                   }
-                }
+                },
+                "type": "value"
               }
             ]
           }
@@ -157,25 +157,25 @@
         "properties": [
           {
             "id": "displayName",
-            "value": "‎SIREN"
+            "value": "FREAK"
           },
           {
             "id": "mappings",
             "value": [
               {
-                "type": "value",
                 "options": {
                   "0": {
-                    "color": "dark-green",
+                    "color": "dark-red",
                     "index": 0,
-                    "text": "DEA/CLO"
+                    "text": "OFF"
                   },
                   "1": {
-                    "color": "dark-red",
+                    "color": "dark-green",
                     "index": 1,
-                    "text": "ACC/OPE"
+                    "text": "ON"
                   }
-                }
+                },
+                "type": "value"
               }
             ]
           }
@@ -195,19 +195,19 @@
             "id": "mappings",
             "value": [
               {
-                "type": "value",
                 "options": {
                   "0": {
-                    "color": "dark-green",
+                    "color": "dark-red",
                     "index": 0,
-                    "text": "DEA/CLO"
+                    "text": "CLOSED"
                   },
                   "1": {
-                    "color": "dark-red",
+                    "color": "dark-green",
                     "index": 1,
-                    "text": "ACC/OPE"
+                    "text": "OPENED"
                   }
-                }
+                },
+                "type": "value"
               }
             ]
           }
@@ -227,19 +227,19 @@
             "id": "mappings",
             "value": [
               {
-                "type": "value",
                 "options": {
                   "0": {
-                    "text": "DEA/OPE",
                     "color": "dark-red",
-                    "index": 0
+                    "index": 0,
+                    "text": "OPENED"
                   },
                   "1": {
-                    "text": "ACC/CLO",
                     "color": "dark-green",
-                    "index": 1
+                    "index": 1,
+                    "text": "CLOSED"
                   }
-                }
+                },
+                "type": "value"
               }
             ]
           }
@@ -259,19 +259,19 @@
             "id": "mappings",
             "value": [
               {
-                "type": "value",
                 "options": {
                   "0": {
-                    "text": "DEA/OPE",
                     "color": "dark-red",
-                    "index": 0
+                    "index": 0,
+                    "text": "OPENED"
                   },
                   "1": {
-                    "text": "ACC/CLO",
                     "color": "dark-green",
-                    "index": 1
+                    "index": 1,
+                    "text": "CLOSED"
                   }
-                }
+                },
+                "type": "value"
               }
             ]
           }
@@ -280,7 +280,7 @@
     ]
   },
   "gridPos": {
-    "h": 6,
+    "h": 8,
     "w": 8,
     "x": 2,
     "y": 0
@@ -301,8 +301,8 @@
     "graphMode": "area",
     "justifyMode": "center",
     "text": {
-      "titleSize": 30,
-      "valueSize": 15
+      "titleSize": 40,
+      "valueSize": 25
     }
   },
   "pluginVersion": "10.2.3",
@@ -321,8 +321,8 @@
       "refId": "A"
     }
   ],
-  "title": "Octocoupler",
+  "title": "Optocoupler",
   "transformations": [],
-  "type": "stat",
-  "transparent": true
+  "transparent": true,
+  "type": "stat"
 }
