@@ -7,26 +7,26 @@
     "defaults": {
       "mappings": [
         {
-          "type": "value",
           "options": {
             "0": {
               "color": "dark-green",
               "index": 0,
               "text": "SAFE"
             }
-          }
+          },
+          "type": "value"
         },
         {
-          "type": "range",
           "options": {
             "from": 1,
-            "to": 15,
             "result": {
               "color": "dark-red",
               "index": 1,
               "text": "UNSAFE"
-            }
-          }
+            },
+            "to": 15
+          },
+          "type": "range"
         }
       ],
       "thresholds": {
@@ -46,7 +46,7 @@
     "overrides": []
   },
   "gridPos": {
-    "h": 6,
+    "h": 8,
     "w": 2,
     "x": 0,
     "y": 0
@@ -97,6 +97,6 @@
       }
     }
   ],
-  "type": "stat",
-  "transparent": true
+  "transparent": true,
+  "type": "stat"
 }
